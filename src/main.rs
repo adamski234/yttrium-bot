@@ -14,9 +14,10 @@ impl serenity::client::EventHandler for EventHandler {
 			let split = message.content.split_whitespace().collect::<Vec<&str>>();
 			if split[0].ends_with("execute") {
 				let keys = yttrium::key_loader::load_keys("");
+				//Placeholder manager
 				let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new_from_json("{}", "757679825661198347"));
 				let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
-				message.channel_id.say(&context.http, format!("{:#?}", yttrium::interpret_string(message.content, &keys.keys, environment))).await.unwrap();
+				message.channel_id.say(&context.http, format!("{:#?}", yttrium::interpret_string(split[1..].join(" "), &keys.keys, environment))).await.unwrap();
 			}
 		}
 	}
