@@ -9,7 +9,9 @@ edition = "2018"
 [dependencies]
 
 yttrium = { git = "https://github.com/adamski234/yttrium" }
-serenity = { version = "0.9", default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
+yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
+serenity = "0.9"
 futures = "0.3"
 serde = "1"
 json5 = "0.3"
+tokio = { version = "0.2", features = ["macros"] }
