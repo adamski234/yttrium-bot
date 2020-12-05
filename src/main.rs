@@ -13,17 +13,32 @@ use serenity::{
 use yttrium_key_base::environment::{Environment, events};
 
 #[group]
-#[commands(execute)]
+#[commands(execute, add)]
 struct General;
 
 #[command]
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
-	let keys = yttrium::key_loader::load_keys("");
+	let keys = yttrium::key_loader::load_keys();
 	//Placeholder manager
 	let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new_from_json("{}", "757679825661198347"));
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
-	let output = yttrium::interpret_string(String::from(args.rest()), &keys.keys, environment);
+	let output = yttrium::interpret_string(String::from(args.rest()), &keys, environment);
 	message.channel_id.say(&context.http, format!("{:#?}", output)).await.unwrap();
+	return Ok(());
+}
+
+#[command]
+async fn add(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let code = String::from(args.rest());
+	let keys = yttrium::key_loader::load_keys();
+	match yttrium::tree_creator::create_ars_tree(code, &keys) {
+		Ok(_) => {
+			message.channel_id.say(&context.http, "Trigger added").await.unwrap();
+		}
+		Err(error) => {
+			message.channel_id.say(&context.http, format!("The string is invalid: {:#?}", error)).await.unwrap();
+		}
+	}
 	return Ok(());
 }
 
