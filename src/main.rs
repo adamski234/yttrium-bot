@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{sync::Arc, hint::unreachable_unchecked};
 use serde::{Deserialize, Serialize};
 use serenity::{
 	prelude::RwLock,
@@ -32,11 +32,41 @@ async fn add(context: &Context, message: &Message, args: Args) -> CommandResult 
 	let code = String::from(args.rest());
 	let keys = yttrium::key_loader::load_keys();
 	match yttrium::tree_creator::create_ars_tree(code, &keys) {
-		Ok(_) => {
-			message.channel_id.say(&context.http, "Trigger added").await.unwrap();
+		Ok(tree) => {
+			match tree.warnings {
+				Some(warnings) => {
+					let mut output = String::new();
+					for warning in warnings {
+						match warning {
+							yttrium::errors_and_warns::Warning::UnclosedKeys => {
+								output.push_str("There are unclosed keys");
+							}
+						}
+					}
+					message.channel_id.say(&context.http, format!("Trigger added, but it has the following errors:\n {}", output)).await.unwrap();
+				}
+				None => {
+					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
+				}
+			} 
 		}
 		Err(error) => {
-			message.channel_id.say(&context.http, format!("The string is invalid: {:#?}", error)).await.unwrap();
+			match error {
+				yttrium::errors_and_warns::Error::WrongAmountOfParameters => {
+					message.channel_id.say(&context.http, "One of your keys has invalid amount of parameters").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::EmptyParameter => {
+					message.channel_id.say(&context.http, "One of your keys has an empty parameter").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::NonexistentKey => {
+					message.channel_id.say(&context.http, "One of your keys does not exist").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::InterpretationError(_) => {
+					unsafe {
+						unreachable_unchecked();
+					}
+				}
+			}
 		}
 	}
 	return Ok(());
