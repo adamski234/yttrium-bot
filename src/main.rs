@@ -1,7 +1,9 @@
-use std::{sync::Arc, hint::unreachable_unchecked};
+#![feature(with_options)]
+
+use std::{hint::unreachable_unchecked, sync::Arc, io::Write};
 use serde::{Deserialize, Serialize};
 use serenity::{
-	prelude::RwLock,
+	prelude::{RwLock, TypeMapKey},
 	client::Context,
 	model::channel::Message,
 	framework::standard::{
@@ -11,6 +13,7 @@ use serenity::{
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
+mod triggermanager;
 
 #[group]
 #[commands(execute, add)]
@@ -31,7 +34,7 @@ async fn execute(context: &Context, message: &Message, args: Args) -> CommandRes
 async fn add(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let code = String::from(args.rest());
 	let keys = yttrium::key_loader::load_keys();
-	match yttrium::tree_creator::create_ars_tree(code, &keys) {
+	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
 		Ok(tree) => {
 			match tree.warnings {
 				Some(warnings) => {
@@ -48,7 +51,8 @@ async fn add(context: &Context, message: &Message, args: Args) -> CommandResult 
 				None => {
 					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
 				}
-			} 
+			}
+			context.data.read().await.get::<TriggerFile>().unwrap().write_all(&code.as_bytes()).unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -82,6 +86,8 @@ async fn main() {
 	}).group(&GENERAL_GROUP);
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
 	client.data.write().await.insert::<Config>(Arc::new(RwLock::new(bot_config)));
+	let trigger_file = std::fs::File::with_options().append(true).create(true).open("./triggers/main.json").unwrap();
+	client.data.write().await.insert::<TriggerFile>(trigger_file);
 	client.start().await.unwrap();
 }
 
@@ -93,4 +99,10 @@ struct Config {
 
 impl serenity::prelude::TypeMapKey for Config {
 	type Value = Arc<RwLock<Config>>;
+}
+
+struct TriggerFile;
+
+impl TypeMapKey for TriggerFile {
+	type Value = std::fs::File;
 }
