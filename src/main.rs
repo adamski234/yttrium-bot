@@ -1,6 +1,13 @@
 #![feature(with_options)]
 
-use std::{hint::unreachable_unchecked, sync::Arc, io::Write};
+use std::{
+	hint::unreachable_unchecked,
+	sync::Arc,
+	io::{
+		Read,
+		Write,
+	}
+};
 use serde::{Deserialize, Serialize};
 use serenity::{
 	prelude::{RwLock, TypeMapKey},
@@ -13,7 +20,7 @@ use serenity::{
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
-mod triggermanager;
+mod triggers;
 
 #[group]
 #[commands(execute, add)]
@@ -31,7 +38,9 @@ async fn execute(context: &Context, message: &Message, args: Args) -> CommandRes
 }
 
 #[command]
-async fn add(context: &Context, message: &Message, args: Args) -> CommandResult {
+async fn add(context: &Context, message: &Message, mut args: Args) -> CommandResult {
+	let trigger = args.single_quoted::<String>().unwrap();
+	args.unquoted();
 	let code = String::from(args.rest());
 	let keys = yttrium::key_loader::load_keys();
 	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
@@ -52,7 +61,23 @@ async fn add(context: &Context, message: &Message, args: Args) -> CommandResult 
 					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
 				}
 			}
-			context.data.read().await.get::<TriggerFile>().unwrap().write_all(&code.as_bytes()).unwrap();
+			let mut file = std::fs::File::with_options().read(true).write(true).create(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
+			let mut file_read = String::new();
+			file.read_to_string(&mut file_read).unwrap();
+			if file_read.is_empty() {
+				file_read = String::from("{}");
+			}
+			let mut trigger_map;
+			match json5::from_str::<triggers::Triggers>(&file_read) {
+				Ok(map) => {
+					trigger_map = map;
+				}
+				Err(_) => {
+					trigger_map = triggers::Triggers::new();
+				}
+			}
+			trigger_map.messages.insert(trigger, code);
+			file.write_all(json5::to_string(&trigger_map).unwrap().as_bytes()).unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -86,8 +111,6 @@ async fn main() {
 	}).group(&GENERAL_GROUP);
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
 	client.data.write().await.insert::<Config>(Arc::new(RwLock::new(bot_config)));
-	let trigger_file = std::fs::File::with_options().append(true).create(true).open("./triggers/main.json").unwrap();
-	client.data.write().await.insert::<TriggerFile>(trigger_file);
 	client.start().await.unwrap();
 }
 
@@ -97,12 +120,6 @@ struct Config {
 	prefix: String,
 }
 
-impl serenity::prelude::TypeMapKey for Config {
+impl TypeMapKey for Config {
 	type Value = Arc<RwLock<Config>>;
-}
-
-struct TriggerFile;
-
-impl TypeMapKey for TriggerFile {
-	type Value = std::fs::File;
 }
