@@ -1,12 +1,8 @@
 #![feature(with_options)]
 
 use std::{
-	hint::unreachable_unchecked,
 	sync::Arc,
-	io::{
-		Read,
-		Write,
-	}
+	io::{Read, Write},
 };
 use serde::{Deserialize, Serialize};
 use serenity::{
@@ -16,7 +12,7 @@ use serenity::{
 	framework::standard::{
 		Args,
 		CommandResult,
-		macros::{group, command},
+		macros::{group, command, hook},
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
@@ -64,9 +60,6 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 			let mut file = std::fs::File::with_options().read(true).write(true).create(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
 			let mut file_read = String::new();
 			file.read_to_string(&mut file_read).unwrap();
-			if file_read.is_empty() {
-				file_read = String::from("{}");
-			}
 			let mut trigger_map;
 			match json5::from_str::<triggers::Triggers>(&file_read) {
 				Ok(map) => {
@@ -90,15 +83,47 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 				yttrium::errors_and_warns::Error::NonexistentKey => {
 					message.channel_id.say(&context.http, "One of your keys does not exist").await.unwrap();
 				}
-				yttrium::errors_and_warns::Error::InterpretationError(_) => {
-					unsafe {
-						unreachable_unchecked();
-					}
-				}
+				yttrium::errors_and_warns::Error::InterpretationError(_) => {}
 			}
 		}
 	}
 	return Ok(());
+}
+
+#[hook]
+async fn normal_message_hook(context: &Context, message: &Message) {
+	let mut file = std::fs::File::with_options().read(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
+	let mut file_read = String::new();
+	file.read_to_string(&mut file_read).unwrap();
+	let trigger_map;
+	match json5::from_str::<triggers::Triggers>(&file_read) {
+		Ok(map) => {
+			trigger_map = map;
+		}
+		Err(_) => {
+			trigger_map = triggers::Triggers::new();
+		}
+	}
+	match trigger_map.messages.get(&message.content) {
+		Some(code) => {
+			let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new(&message.guild_id.unwrap().to_string()));
+			let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, String::from(""), String::from(""));
+			let event_info = yttrium_key_base::environment::events::EventType::Message(event_info);
+			let environment = Environment::new(event_info, message.guild_id.unwrap().clone(), context, db_manager);
+			let result = yttrium::interpret_string(code.clone(), &yttrium::key_loader::load_keys(), environment);
+			match result {
+				Ok(result) => {
+					message.channel_id.say(&context.http, result.result.message).await.unwrap();
+				}
+				Err(error) => {
+					if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {
+						message.channel_id.say(&context.http, format!("An error happened during interpretation: `{}`", error)).await.unwrap();
+					}
+				}
+			}
+		}
+		None => {}
+	}
 }
 
 #[tokio::main]
@@ -108,7 +133,7 @@ async fn main() {
 	let bot_config = json5::from_str::<Config>(&input).expect("The config file is invalid");
 	let framework = serenity::framework::StandardFramework::new().configure(|config| {
 		return config.prefix(&bot_config.prefix);
-	}).group(&GENERAL_GROUP);
+	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
 	client.data.write().await.insert::<Config>(Arc::new(RwLock::new(bot_config)));
 	client.start().await.unwrap();
