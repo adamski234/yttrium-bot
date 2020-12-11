@@ -70,6 +70,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 				}
 			}
 			trigger_map.messages.insert(trigger, code);
+			//TODO: This appends to the file instead of replacing the content
 			file.write_all(json5::to_string(&trigger_map).unwrap().as_bytes()).unwrap();
 		}
 		Err(error) => {
