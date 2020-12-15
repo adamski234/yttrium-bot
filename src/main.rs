@@ -17,6 +17,7 @@ use serenity::{
 };
 use yttrium_key_base::environment::{Environment, events};
 mod triggers;
+mod match_engine;
 
 #[group]
 #[commands(execute, add)]
