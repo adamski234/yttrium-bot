@@ -58,7 +58,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
 				}
 			}
-			let mut file = std::fs::File::with_options().read(true).write(true).create(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
+			let mut file = std::fs::File::with_options().read(true).write(true).truncate(true).create(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
 			let mut file_read = String::new();
 			file.read_to_string(&mut file_read).unwrap();
 			let mut trigger_map;
@@ -71,7 +71,6 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 				}
 			}
 			trigger_map.messages.insert(trigger, code);
-			//TODO: This appends to the file instead of replacing the content
 			file.write_all(json5::to_string(&trigger_map).unwrap().as_bytes()).unwrap();
 		}
 		Err(error) => {
@@ -106,25 +105,40 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			trigger_map = triggers::Triggers::new();
 		}
 	}
-	match trigger_map.messages.get(&message.content) {
-		Some(code) => {
-			let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new(&message.guild_id.unwrap().to_string()));
-			let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, String::from(""), String::from(""));
-			let event_info = yttrium_key_base::environment::events::EventType::Message(event_info);
-			let environment = Environment::new(event_info, message.guild_id.unwrap().clone(), context, db_manager);
-			let result = yttrium::interpret_string(code.clone(), &yttrium::key_loader::load_keys(), environment);
-			match result {
-				Ok(result) => {
-					message.channel_id.say(&context.http, result.result.message).await.unwrap();
-				}
-				Err(error) => {
-					if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {
-						message.channel_id.say(&context.http, format!("An error happened during interpretation: `{}`", error)).await.unwrap();
+	for (trigger, code) in &trigger_map.messages {
+		//Starting with nothing: starting literal
+		//Starting with `&`: literal
+		//Starting with `?`: regex
+		let trigger_type;
+		if trigger.starts_with('&') {
+			trigger_type = match_engine::MatchType::Literal(String::from(trigger.trim_start_matches('&')));
+		} else if trigger.starts_with('?') {
+			trigger_type = match_engine::MatchType::Regex(regex::Regex::new(trigger.trim_start_matches('?')).unwrap());
+		} else {
+			trigger_type = match_engine::MatchType::StartingLiteral(trigger.clone());
+		}
+		match match_engine::check_match(&message.content, trigger_type) {
+			Some(result) => {
+				let parameter = result.rest;
+				let trigger = result.matched;
+				let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new(&message.guild_id.unwrap().to_string()));
+				let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
+				let event = yttrium_key_base::environment::events::EventType::Message(event_info);
+				let environment = Environment::new(event, message.guild_id.unwrap().clone(), context, db_manager);
+				let result = yttrium::interpret_string(code.clone(), &yttrium::key_loader::load_keys(), environment);
+				match result {
+					Ok(result) => {
+						message.channel_id.say(&context.http, result.result.message).await.unwrap();
+					}
+					Err(error) => {
+						if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {
+							message.channel_id.say(&context.http, format!("An error happened during interpretation: `{}`", error)).await.unwrap();
+						}
 					}
 				}
 			}
+			None => {}
 		}
-		None => {}
 	}
 }
 

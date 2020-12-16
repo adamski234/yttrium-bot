@@ -51,9 +51,9 @@ pub fn check_match(text: &str, to_check: MatchType) -> Option<MatchResult> {
 /// * `index`: Where the match occured
 #[derive(Debug, Clone, Hash, PartialEq, PartialOrd)]
 pub struct MatchResult {
-	matched: String,
-	rest: String,
-	index: usize,
+	pub matched: String,
+	pub rest: String,
+	pub index: usize,
 }
 
 pub enum MatchType {
