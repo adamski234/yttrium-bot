@@ -15,6 +15,19 @@ pub fn check_match(text: &str, to_check: MatchType) -> Option<MatchResult> {
 				return None;
 			}
 		}
+		MatchType::StartingLiteral(matcher) => {
+			if text.starts_with(&matcher) {
+				let index: usize = 0;
+				let rest = text.replacen(&matcher, "", 1);
+				return Some(MatchResult {
+					matched: matcher.clone(),
+					index: index,
+					rest: rest,
+				});
+			} else {
+				return None;
+			}
+		}
 		MatchType::Regex(regex) => {
 			match regex.find(&text) {
 				Some(result) => {
@@ -45,5 +58,6 @@ pub struct MatchResult {
 
 pub enum MatchType {
 	Literal(String),
+	StartingLiteral(String),
 	Regex(regex::Regex),
 }
