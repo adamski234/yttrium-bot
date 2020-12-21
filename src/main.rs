@@ -15,13 +15,24 @@ use serenity::{
 		macros::{group, command, hook},
 	}
 };
+use sqlx::prelude::Row;
 use yttrium_key_base::environment::{Environment, events};
 mod triggers;
 mod match_engine;
 
 #[group]
-#[commands(execute, add)]
+#[commands(execute, add, db_check)]
 struct General;
+
+#[command]
+async fn db_check(context: &Context, message: &Message, _args: Args) -> CommandResult {
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	let content = sqlx::query("SELECT * FROM sqlite_sequence").fetch_all(db).await.unwrap();
+	let row = &content[0];
+	message.channel_id.say(&context.http, format!("{:#?}", row.columns())).await.unwrap();
+	return Ok(());
+}
 
 #[command]
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
@@ -152,6 +163,8 @@ async fn main() {
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
 	client.data.write().await.insert::<Config>(Arc::new(RwLock::new(bot_config)));
+	let data = sqlx::SqlitePool::connect("./data.db").await.unwrap();
+	client.data.write().await.insert::<DB>(data);
 	client.start().await.unwrap();
 }
 
@@ -163,4 +176,10 @@ struct Config {
 
 impl TypeMapKey for Config {
 	type Value = Arc<RwLock<Config>>;
+}
+
+struct DB;
+
+impl TypeMapKey for DB {
+	type Value = sqlx::sqlite::SqlitePool;
 }

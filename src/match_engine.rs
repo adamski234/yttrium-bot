@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 /// Matches `text` against `to_check`
 pub fn check_match(text: &str, to_check: MatchType) -> Option<MatchResult> {
 	match to_check {

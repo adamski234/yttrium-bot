@@ -2,3 +2,4 @@
 config.json5
 /triggers
 /databases
+data.db
