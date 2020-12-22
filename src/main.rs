@@ -1,9 +1,7 @@
 #![feature(with_options)]
 
-use std::{
-	sync::Arc,
-	io::Read,
-};
+use std::sync::Arc;
+use sqlx::Row;
 use serde::{Deserialize, Serialize};
 use serenity::{
 	prelude::{RwLock, TypeMapKey},
@@ -16,7 +14,6 @@ use serenity::{
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
-mod triggers;
 mod match_engine;
 
 #[group]
@@ -83,19 +80,14 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 
 #[hook]
 async fn normal_message_hook(context: &Context, message: &Message) {
-	let mut file = std::fs::File::with_options().read(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
-	let mut file_read = String::new();
-	file.read_to_string(&mut file_read).unwrap();
-	let trigger_map;
-	match json5::from_str::<triggers::Triggers>(&file_read) {
-		Ok(map) => {
-			trigger_map = map;
-		}
-		Err(_) => {
-			trigger_map = triggers::Triggers::new();
-		}
-	}
-	for (trigger, code) in &trigger_map.messages {
+	let guild_id = message.guild_id.unwrap();
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	let query = format!("SELECT trigger, code FROM triggers WHERE guild_id = \"{}\"", guild_id);
+	let result = sqlx::query(&query).fetch_all(db).await.unwrap();
+	for row in result {
+		let trigger: String = row.get("trigger");
+		let code: String = row.get("code");
 		//Starting with nothing: starting literal
 		//Starting with `&`: literal
 		//Starting with `?`: regex
@@ -126,6 +118,7 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 						}
 					}
 				}
+				return;
 			}
 			None => {}
 		}
