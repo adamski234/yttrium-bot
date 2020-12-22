@@ -13,11 +13,11 @@ CREATE TABLE IF NOT EXISTS "databases" (
 	"content"	TEXT NOT NULL COLLATE UTF16,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
-CREATE INDEX IF NOT EXISTS "triggers_idx" ON "triggers" (
+CREATE UNIQUE INDEX IF NOT EXISTS "triggers_idx" ON "triggers" (
 	"trigger",
 	"guild_id"
 );
-CREATE INDEX IF NOT EXISTS "db_names_idx" ON "databases" (
+CREATE UNIQUE INDEX IF NOT EXISTS "db_names_idx" ON "databases" (
 	"name",
 	"guild_id"
 );
