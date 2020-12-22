@@ -292,9 +292,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fe574d0a347959175da69c516d7c554a32b66dec8b82f4b90f493297b03321da"
+checksum = "a9615c89d0b2177de13e42c16baf3e5a5f6614af361ee7cd001e03b0abc2d9ca"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -304,9 +304,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "803df22503512daa145981fe36c260cec3fb946c9beee4e92068fe8d142dd408"
+checksum = "86c9c014bf0071eb6e251484c463b34a00df0447a6105bc2277e9dd34c2a9a2f"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -319,15 +319,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6439d495c170e20bc35429390395c7d74d53becd17bf395452345e7fa7d0b87"
+checksum = "6b8c8eb327a5cd189223cfdd5fc6ee8a2270097fcdaf8ea813c22f4c3542ade0"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.19"
+version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "174182a412af6dac9891a605846632cc8ffa2eb56826359f465dcdf94d725e93"
+checksum = "35002f70d61f451bbd172868be7016074e971b542ad79e5b189c7a1a4c12e02e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -611,9 +611,9 @@ dependencies = [
 
 [[package]]
 name = "heck"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "20564e78d53d2bb135c343b3f47714a56af2061f1c928fdb541dc7b9fdd94205"
+checksum = "87cbf45460356b7deeb5e3415b5563308c0a9b057c85e12b06ad551f98d0a6ac"
 dependencies = [
  "unicode-segmentation",
 ]
@@ -1034,9 +1034,9 @@ dependencies = [
 
 [[package]]
 name = "parking_lot_core"
-version = "0.8.1"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7c6d9b8427445284a09c55be860a15855ab580a417ccad9da88f5a06787ced0"
+checksum = "9ccb628cad4f84851442432c60ad8e1f607e29752d0bf072cbd0baf28aa34272"
 dependencies = [
  "cfg-if 1.0.0",
  "instant",
@@ -1501,9 +1501,9 @@ checksum = "ae524f056d7d770e174287294f562e95044c68e88dec909a00d2094805db9d75"
 
 [[package]]
 name = "socket2"
-version = "0.3.18"
+version = "0.3.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97e0e9fd577458a4f61fb91fcb559ea2afecc54c934119421f9f5d3d5b1a1057"
+checksum = "122e570113d28d773067fab24266b66753f6ea915758651696b6e35e49f88d6e"
 dependencies = [
  "cfg-if 1.0.0",
  "libc",

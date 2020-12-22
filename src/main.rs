@@ -2,7 +2,7 @@
 
 use std::{
 	sync::Arc,
-	io::{Read, Write},
+	io::Read,
 };
 use serde::{Deserialize, Serialize};
 use serenity::{
@@ -15,24 +15,13 @@ use serenity::{
 		macros::{group, command, hook},
 	}
 };
-use sqlx::prelude::Row;
 use yttrium_key_base::environment::{Environment, events};
 mod triggers;
 mod match_engine;
 
 #[group]
-#[commands(execute, add, db_check)]
+#[commands(execute, add)]
 struct General;
-
-#[command]
-async fn db_check(context: &Context, message: &Message, _args: Args) -> CommandResult {
-	let lock = context.data.write().await;
-	let db = lock.get::<DB>().unwrap();
-	let content = sqlx::query("SELECT * FROM sqlite_sequence").fetch_all(db).await.unwrap();
-	let row = &content[0];
-	message.channel_id.say(&context.http, format!("{:#?}", row.columns())).await.unwrap();
-	return Ok(());
-}
 
 #[command]
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
@@ -69,20 +58,10 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
 				}
 			}
-			let mut file = std::fs::File::with_options().read(true).write(true).truncate(true).create(true).open(format!("./triggers/{}.json", message.guild_id.unwrap())).unwrap();
-			let mut file_read = String::new();
-			file.read_to_string(&mut file_read).unwrap();
-			let mut trigger_map;
-			match json5::from_str::<triggers::Triggers>(&file_read) {
-				Ok(map) => {
-					trigger_map = map;
-				}
-				Err(_) => {
-					trigger_map = triggers::Triggers::new();
-				}
-			}
-			trigger_map.messages.insert(trigger, code);
-			file.write_all(json5::to_string(&trigger_map).unwrap().as_bytes()).unwrap();
+			let guild_id = message.guild_id.unwrap();
+			let lock = context.data.write().await;
+			let db = lock.get::<DB>().unwrap();
+			sqlx::query(&format!("REPLACE INTO triggers VALUES (NULL, \"{}\", \"{}\", \"{}\")", trigger, code, guild_id)).execute(db).await.unwrap();
 		}
 		Err(error) => {
 			match error {
