@@ -1,5 +1,7 @@
 #![feature(with_options)]
 
+mod databases;
+mod match_engine;
 use std::sync::Arc;
 use sqlx::Row;
 use serde::{Deserialize, Serialize};
@@ -14,7 +16,10 @@ use serenity::{
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
-mod match_engine;
+use databases::{
+	SQLDatabase,
+	SQLDatabaseManager,
+};
 
 #[group]
 #[commands(execute, add)]
@@ -24,7 +29,7 @@ struct General;
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let keys = yttrium::key_loader::load_keys();
 	//Placeholder manager
-	let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new_from_json("{}", "757679825661198347"));
+	let db_manager = yttrium_key_base::databases::Placeholder {};
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
 	let output = yttrium::interpret_string(String::from(args.rest()), &keys, environment);
 	message.channel_id.say(&context.http, format!("{:#?}", output)).await.unwrap();
@@ -36,7 +41,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 	let trigger = args.single_quoted::<String>().unwrap();
 	args.unquoted();
 	let code = String::from(args.rest());
-	let keys = yttrium::key_loader::load_keys();
+	let keys = yttrium::key_loader::load_keys::<SQLDatabaseManager, SQLDatabase>();
 	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
 		Ok(tree) => {
 			match tree.warnings {
@@ -103,7 +108,7 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			Some(result) => {
 				let parameter = result.rest;
 				let trigger = result.matched;
-				let db_manager = Box::from(yttrium_key_base::databases::JSONDatabaseManager::new(&message.guild_id.unwrap().to_string()));
+				let db_manager = yttrium_key_base::databases::Placeholder {};
 				let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
 				let event = yttrium_key_base::environment::events::EventType::Message(event_info);
 				let environment = Environment::new(event, message.guild_id.unwrap().clone(), context, db_manager);

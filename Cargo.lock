@@ -292,9 +292,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.20"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9615c89d0b2177de13e42c16baf3e5a5f6614af361ee7cd001e03b0abc2d9ca"
+checksum = "c65e9df8d5ac95ac0a838dfc6e793c0a90a84e8e89338d1fdcbb39fa76c5af28"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -304,9 +304,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.20"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86c9c014bf0071eb6e251484c463b34a00df0447a6105bc2277e9dd34c2a9a2f"
+checksum = "742026578fecefe8b4f098dd3d1660b4a3824115911af45fc14b58f5acf18853"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -319,15 +319,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.20"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b8c8eb327a5cd189223cfdd5fc6ee8a2270097fcdaf8ea813c22f4c3542ade0"
+checksum = "4f45d94c8a06e5a72cffa97c659e4d0e678419e4dd9849895a97d3d74b2aa0ed"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.20"
+version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35002f70d61f451bbd172868be7016074e971b542ad79e5b189c7a1a4c12e02e"
+checksum = "fab771f612674321f5b2f083a060d688d9bc75589969357764314942b9c6dfee"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -425,9 +425,9 @@ checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
 
 [[package]]
 name = "funty"
-version = "1.0.1"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ba62103ce691c2fd80fbae2213dfdda9ce60804973ac6b6e97de818ea7f52c8"
+checksum = "fed34cd105917e91daa4da6b3728c47b068749d6a62c59811f06ed2ac71d9da7"
 
 [[package]]
 name = "futures"
@@ -545,11 +545,11 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.1.15"
+version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc587bc0ec293155d5bfa6b9891ec18a1e330c234f896ea47fbada4cadbe47e6"
+checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
 dependencies = [
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
  "libc",
  "wasi 0.9.0+wasi-snapshot-preview1",
 ]
@@ -768,9 +768,9 @@ checksum = "47be2f14c678be2fdcab04ab1171db51b2762ce6f0a8ee87c8dd4a04ed216135"
 
 [[package]]
 name = "itoa"
-version = "0.4.6"
+version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc6f3ad7b9d11a0c00842ff8de1b60ee58661048eb8049ed33c73594f359d7e6"
+checksum = "dd25036021b0de88a0aff6b850051563c6516d0bf53f8638938edbb9de732736"
 
 [[package]]
 name = "js-sys"
@@ -1207,7 +1207,7 @@ version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
 dependencies = [
- "getrandom 0.1.15",
+ "getrandom 0.1.16",
  "libc",
  "rand_chacha",
  "rand_core",
@@ -1230,7 +1230,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
 dependencies = [
- "getrandom 0.1.15",
+ "getrandom 0.1.16",
 ]
 
 [[package]]
@@ -1401,9 +1401,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.60"
+version = "1.0.61"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1500e84d27fe482ed1dc791a56eddc2f230046a040fa908c08bda1d9fb615779"
+checksum = "4fceb2595057b6891a4ee808f70054bd2d12f0e97f1cbb78689b59f676df325a"
 dependencies = [
  "itoa",
  "ryu",
@@ -1495,9 +1495,9 @@ checksum = "c111b5bd5695e56cffe5129854aa230b39c93a305372fdbb2668ca2394eea9f8"
 
 [[package]]
 name = "smallvec"
-version = "1.5.1"
+version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae524f056d7d770e174287294f562e95044c68e88dec909a00d2094805db9d75"
+checksum = "1a55ca5f3b68e41c979bf8c46a6f1da892ca4db8f94023ce0bd32407573b1ac0"
 
 [[package]]
 name = "socket2"
@@ -1631,9 +1631,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.55"
+version = "1.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a571a711dddd09019ccc628e1b17fe87c59b09d513c06c026877aa708334f37a"
+checksum = "4211ce9909eb971f111059df92c45640aad50a619cf55cd76476be803c4c68e6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1657,18 +1657,18 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.22"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e9ae34b84616eedaaf1e9dd6026dbe00dcafa92aa0c8077cb69df1fcfe5e53e"
+checksum = "76cc616c6abf8c8928e2fdcc0dbfab37175edd8fb49a4641066ad1364fdab146"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.22"
+version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ba20f23e85b10754cd195504aebf6a27e2e6cbe28c17778a0c930724628dd56"
+checksum = "9be73a2caec27583d0046ef3796c3794f868a5bc813db689eed00c7631275cd1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2083,9 +2083,9 @@ dependencies = [
 
 [[package]]
 name = "whoami"
-version = "1.0.1"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e35495e7faf4c657051a8e9725d9c37ac57879e915be3ed55bb401af84382035"
+checksum = "d595b2e146f36183d6a590b8d41568e2bc84c922267f43baf61c956330eeb436"
 dependencies = [
  "wasm-bindgen",
  "web-sys",
@@ -2162,7 +2162,7 @@ checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
 [[package]]
 name = "yttrium"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "serde_json",
@@ -2171,7 +2171,6 @@ dependencies = [
  "yttrium_std_attach",
  "yttrium_std_ban",
  "yttrium_std_channel",
- "yttrium_std_database_exists",
  "yttrium_std_db_read",
  "yttrium_std_db_write_str",
  "yttrium_std_delete",
@@ -2215,7 +2214,7 @@ dependencies = [
 [[package]]
 name = "yttrium_key_base"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "serde_json",
  "serenity",
@@ -2224,7 +2223,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_attach"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2232,7 +2231,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_ban"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2243,7 +2242,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_channel"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2252,17 +2251,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "yttrium_std_database_exists"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
 name = "yttrium_std_db_read"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2270,7 +2261,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_db_write_str"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2278,7 +2269,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_delete"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "humantime",
@@ -2290,7 +2281,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_everyone"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2298,7 +2289,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_guild"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2309,7 +2300,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_hasrole"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2320,7 +2311,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_joined"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "serenity",
@@ -2330,7 +2321,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_kick"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "serenity",
@@ -2340,7 +2331,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_math"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "cxx",
  "cxx-build",
@@ -2350,7 +2341,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_mention"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "serenity",
@@ -2360,7 +2351,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_parameter"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2368,7 +2359,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_pin"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "serenity",
@@ -2378,7 +2369,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_rand"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "rand",
  "yttrium_key_base",
@@ -2387,7 +2378,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_redirect"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "regex",
  "yttrium_key_base",
@@ -2396,7 +2387,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_role"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2407,7 +2398,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_selfdelete"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "humantime",
  "yttrium_key_base",
@@ -2416,7 +2407,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_selfreact"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "regex",
  "serenity",
@@ -2427,7 +2418,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_setnickname"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2438,7 +2429,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_sleep"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "humantime",
  "yttrium_key_base",
@@ -2447,7 +2438,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_take"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
@@ -2458,7 +2449,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_text"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "glob",
  "regex",
@@ -2468,7 +2459,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_trigger"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2476,7 +2467,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_user"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#9989e2b4adf4ee0f6de83112723243fa0c9a1d41"
+source = "git+https://github.com/adamski234/yttrium#f05669ba014c58e84492af4503d41a16827f44fe"
 dependencies = [
  "futures",
  "regex",
