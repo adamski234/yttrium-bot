@@ -43,15 +43,39 @@ impl yttrium_key_base::databases::Database for SQLDatabase {
     }
 
     fn write_key(&mut self, name: String, value: yttrium_key_base::databases::StringOrArray) {
-        todo!()
+		let to_insert;
+		match value {
+			yttrium_key_base::databases::StringOrArray::String(text) => {
+				to_insert = text;
+			}
+			yttrium_key_base::databases::StringOrArray::Array(_array) => {
+				todo!();
+			}
+		}
+		let query = format!("REPLACE INTO databases VALUES ({}, {}, {}, {})", self.name, self.guild_id, name, to_insert);
+		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
     }
 
     fn remove_key(&mut self, name: &str) {
-        todo!()
+        let query = format!("DELETE FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
+		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
     }
 
     fn key_exists(&self, name: &str) -> bool {
-        todo!()
+		let query = format!("SELECT name FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
+		let result = futures::executor::block_on(sqlx::query(&query).fetch_optional(&self.pool));
+		match result {
+			Ok(Some(_)) => {
+				return true;
+			}
+			Ok(None) => {
+				return false;
+			}
+			Err(error) => {
+				eprintln!("{}", error);
+				return false;
+			}
+		}
     }
 }
 
@@ -66,7 +90,7 @@ impl yttrium_key_base::databases::DatabaseManager<SQLDatabase> for SQLDatabaseMa
 	}
 
 	fn clear_database(&mut self, name: &str) {
-		let query = format!("UPDATE databases SET content = {{}} WHERE name = {} AND guild_id = {}", name, self.guild_id);
+		let query = format!("DELETE FROM databases WHERE name = {} AND guild_id = {}", name, self.guild_id);
 		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
 	}
 }
