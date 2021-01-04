@@ -29,7 +29,9 @@ struct General;
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let keys = yttrium::key_loader::load_keys();
 	//Placeholder manager
-	let db_manager = yttrium_key_base::databases::Placeholder {};
+	let data = context.data.read().await;
+	let pool = data.get::<DB>().unwrap();
+	let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
 	let output = yttrium::interpret_string(String::from(args.rest()), &keys, environment);
 	message.channel_id.say(&context.http, format!("{:#?}", output)).await.unwrap();
@@ -108,7 +110,9 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			Some(result) => {
 				let parameter = result.rest;
 				let trigger = result.matched;
-				let db_manager = yttrium_key_base::databases::Placeholder {};
+				let data = context.data.read().await;
+				let pool = data.get::<DB>().unwrap();
+				let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
 				let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
 				let event = yttrium_key_base::environment::events::EventType::Message(event_info);
 				let environment = Environment::new(event, message.guild_id.unwrap().clone(), context, db_manager);

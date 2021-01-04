@@ -28,11 +28,11 @@ impl SQLDatabaseManager {
 
 impl yttrium_key_base::databases::Database for SQLDatabase {
     fn get_key(&self, name: &str) -> Option<yttrium_key_base::databases::StringOrArray> {
-		let query = format!("SELECT key_content FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
+		let query = format!("SELECT key_value FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
 		let result = futures::executor::block_on(sqlx::query(&query).fetch_one(&self.pool));
 		match result {
 			Ok(result) => {
-				let content = result.get::<String, &str>("key_content");
+				let content = result.get::<String, &str>("key_value");
 				return Some(yttrium_key_base::databases::StringOrArray::String(content));
 			}
 			Err(error) => {
@@ -52,7 +52,7 @@ impl yttrium_key_base::databases::Database for SQLDatabase {
 				todo!();
 			}
 		}
-		let query = format!("REPLACE INTO databases VALUES ({}, {}, {}, {})", self.name, self.guild_id, name, to_insert);
+		let query = format!("REPLACE INTO databases VALUES (\"{}\", \"{}\", \"{}\", \"{}\")", self.name, self.guild_id, name, to_insert);
 		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
     }
 
