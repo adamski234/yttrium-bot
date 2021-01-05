@@ -22,7 +22,7 @@ use databases::{
 };
 
 #[group]
-#[commands(execute, add)]
+#[commands(execute, add, remove)]
 struct General;
 
 #[command]
@@ -65,7 +65,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 			let guild_id = message.guild_id.unwrap();
 			let lock = context.data.write().await;
 			let db = lock.get::<DB>().unwrap();
-			sqlx::query(&format!("REPLACE INTO triggers VALUES (NULL, \"{}\", \"{}\", \"{}\")", trigger, code, guild_id)).execute(db).await.unwrap();
+			sqlx::query(&format!("REPLACE INTO triggers VALUES (\"{}\", \"{}\", \"{}\")", trigger, code, guild_id)).execute(db).await.unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -82,6 +82,17 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 			}
 		}
 	}
+	return Ok(());
+}
+
+#[command]
+async fn remove(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let trigger = args.parse::<String>().unwrap();
+	let query = format!("DELETE FROM triggers WHERE trigger = {} AND guild_id = {}", trigger, message.guild_id.unwrap());
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	sqlx::query(&query).execute(db).await.unwrap();
+	message.channel_id.say(&context.http, "Trigger deleted").await.unwrap();
 	return Ok(());
 }
 
