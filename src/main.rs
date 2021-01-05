@@ -3,7 +3,7 @@
 mod databases;
 mod match_engine;
 use std::sync::Arc;
-use sqlx::Row;
+use sqlx::{Done, Row};
 use serde::{Deserialize, Serialize};
 use serenity::{
 	prelude::{RwLock, TypeMapKey},
@@ -22,7 +22,7 @@ use databases::{
 };
 
 #[group]
-#[commands(execute, add, remove)]
+#[commands(execute, add, remove, show)]
 struct General;
 
 #[command]
@@ -43,6 +43,10 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 	let trigger = args.single_quoted::<String>().unwrap();
 	args.unquoted();
 	let code = String::from(args.rest());
+	if code.is_empty() {
+		message.channel_id.say(&context.http, "The trigger does not have a response").await.unwrap();
+		return Ok(());
+	}
 	let keys = yttrium::key_loader::load_keys::<SQLDatabaseManager, SQLDatabase>();
 	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
 		Ok(tree) => {
@@ -88,11 +92,50 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 #[command]
 async fn remove(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let trigger = args.parse::<String>().unwrap();
-	let query = format!("DELETE FROM triggers WHERE trigger = {} AND guild_id = {}", trigger, message.guild_id.unwrap());
+	let query = format!("DELETE FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
 	let lock = context.data.write().await;
 	let db = lock.get::<DB>().unwrap();
-	sqlx::query(&query).execute(db).await.unwrap();
-	message.channel_id.say(&context.http, "Trigger deleted").await.unwrap();
+	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
+		0 => {
+			message.channel_id.say(&context.http, "Trigger not found").await.unwrap();
+		}
+		_ => {
+			message.channel_id.say(&context.http, "Trigger deleted").await.unwrap();
+		}
+	}
+	return Ok(());
+}
+
+#[command]
+async fn show(context: &Context, message: &Message, mut args: Args) -> CommandResult {
+	args.quoted();
+	let trigger = args.parse::<String>().unwrap();
+	let query = format!("SELECT code FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	match sqlx::query(&query).fetch_optional(db).await {
+		Ok(Some(result)) => {
+			let code = result.get::<String, &str>("code");
+			let trigger_type = match_engine::MatchType::new(trigger);
+			match trigger_type {
+				match_engine::MatchType::Literal(_) => {
+					message.channel_id.say(&context.http, format!("Trigger type: Literal```\n{}\n```", code)).await.unwrap();
+				}
+				match_engine::MatchType::StartingLiteral(_) => {
+					message.channel_id.say(&context.http, format!("Trigger type: Starting literal\n```\n{}\n```", code)).await.unwrap();
+				}
+				match_engine::MatchType::Regex(_) => {
+					message.channel_id.say(&context.http, format!("Trigger type: Regex\n```\n{}\n```", code)).await.unwrap();
+				}
+			}
+		}
+		Ok(None) => {
+			message.channel_id.say(&context.http, "Trigger not found").await.unwrap();
+		}
+		Err(error) => {
+			eprintln!("{}", error);
+		}
+	}
 	return Ok(());
 }
 
@@ -109,14 +152,7 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 		//Starting with nothing: starting literal
 		//Starting with `&`: literal
 		//Starting with `?`: regex
-		let trigger_type;
-		if trigger.starts_with('&') {
-			trigger_type = match_engine::MatchType::Literal(String::from(trigger.trim_start_matches('&')));
-		} else if trigger.starts_with('?') {
-			trigger_type = match_engine::MatchType::Regex(regex::Regex::new(trigger.trim_start_matches('?')).unwrap());
-		} else {
-			trigger_type = match_engine::MatchType::StartingLiteral(trigger.clone());
-		}
+		let trigger_type = match_engine::MatchType::new(trigger);
 		match match_engine::check_match(&message.content, trigger_type) {
 			Some(result) => {
 				let parameter = result.rest;

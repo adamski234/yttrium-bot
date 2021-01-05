@@ -60,3 +60,15 @@ pub enum MatchType {
 	StartingLiteral(String),
 	Regex(regex::Regex),
 }
+
+impl MatchType {
+	pub fn new(trigger: String) -> Self {
+		if trigger.starts_with('&') {
+			return Self::Literal(String::from(trigger.trim_start_matches('&')));
+		} else if trigger.starts_with('?') {
+			return Self::Regex(regex::Regex::new(trigger.trim_start_matches('?')).unwrap());
+		} else {
+			return Self::StartingLiteral(trigger);
+		}
+	}
+}
