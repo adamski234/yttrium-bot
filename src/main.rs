@@ -28,13 +28,13 @@ struct General;
 
 #[command]
 async fn execute(context: &Context, message: &Message, args: Args) -> CommandResult {
-	let keys = yttrium::key_loader::load_keys();
-	//Placeholder manager
 	let data = context.data.read().await;
+	let keys = data.get::<KeyList>().unwrap();
+	//Placeholder manager
 	let pool = data.get::<DB>().unwrap();
 	let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
-	let output = yttrium::interpret_string(String::from(args.rest()), &keys, environment);
+	let output = yttrium::interpret_string(String::from(args.rest()), keys, environment);
 	message.channel_id.say(&context.http, format!("{:#?}", output)).await.unwrap();
 	return Ok(());
 }
@@ -48,7 +48,8 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 		message.channel_id.say(&context.http, "The trigger does not have a response").await.unwrap();
 		return Ok(());
 	}
-	let keys = yttrium::key_loader::load_keys::<SQLDatabaseManager, SQLDatabase>();
+	let data = context.data.read().await;
+	let keys = data.get::<KeyList>().unwrap();
 	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
 		Ok(tree) => {
 			match tree.warnings {
@@ -68,7 +69,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 				}
 			}
 			let guild_id = message.guild_id.unwrap();
-			let lock = context.data.write().await;
+			let lock = context.data.read().await;
 			let db = lock.get::<DB>().unwrap();
 			sqlx::query(&format!("REPLACE INTO triggers VALUES (\"{}\", \"{}\", \"{}\")", trigger, code, guild_id)).execute(db).await.unwrap();
 		}
@@ -94,7 +95,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 async fn remove(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let trigger = args.parse::<String>().unwrap();
 	let query = format!("DELETE FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
-	let lock = context.data.write().await;
+	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
 		0 => {
@@ -112,7 +113,7 @@ async fn show(context: &Context, message: &Message, mut args: Args) -> CommandRe
 	args.quoted();
 	let trigger = args.parse::<String>().unwrap();
 	let query = format!("SELECT code FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
-	let lock = context.data.write().await;
+	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	match sqlx::query(&query).fetch_optional(db).await {
 		Ok(Some(result)) => {
@@ -164,8 +165,10 @@ async fn event_add(context: &Context, message: &Message, mut args: Args) -> Comm
 	let code = String::from(args.rest());
 	if code.is_empty() {
 		message.channel_id.say(&context.http, "You need to provide a response to the event").await.unwrap();
+		return Ok(());
 	}
-	let keys = yttrium::key_loader::load_keys::<SQLDatabaseManager, SQLDatabase>();
+	let lock = context.data.read().await;
+	let keys = lock.get::<KeyList>().unwrap();
 	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
 		Ok(tree) => {
 			match tree.warnings {
@@ -185,9 +188,10 @@ async fn event_add(context: &Context, message: &Message, mut args: Args) -> Comm
 				}
 			}
 			let guild_id = message.guild_id.unwrap();
-			let lock = context.data.write().await;
+			let lock = context.data.read().await;
 			let db = lock.get::<DB>().unwrap();
-			sqlx::query(&format!("REPLACE INTO events VALUES (\"{}\", \"{}\", \"{}\")", event, guild_id, code)).execute(db).await.unwrap();
+			let query = format!("REPLACE INTO events VALUES (\"{}\", \"{}\", \"{}\")", event, guild_id, code);
+			sqlx::query(&query).execute(db).await.unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -228,7 +232,7 @@ async fn event_remove(context: &Context, message: &Message, args: Args) -> Comma
 		}
 	}
 	let query = format!("DELETE FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
-	let lock = context.data.write().await;
+	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
 		0 => {
@@ -262,7 +266,7 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 		}
 	}
 	let query = format!("SELECT code FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
-	let lock = context.data.write().await;
+	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	match sqlx::query(&query).fetch_optional(db).await {
 		Ok(Some(result)) => {
@@ -282,7 +286,7 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 #[hook]
 async fn normal_message_hook(context: &Context, message: &Message) {
 	let guild_id = message.guild_id.unwrap();
-	let lock = context.data.write().await;
+	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	let query = format!("SELECT trigger, code FROM triggers WHERE guild_id = \"{}\"", guild_id);
 	let result = sqlx::query(&query).fetch_all(db).await.unwrap();
@@ -303,7 +307,8 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 				let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
 				let event = yttrium_key_base::environment::events::EventType::Message(event_info);
 				let environment = Environment::new(event, message.guild_id.unwrap().clone(), context, db_manager);
-				let result = yttrium::interpret_string(code.clone(), &yttrium::key_loader::load_keys(), environment);
+				let keys = lock.get::<KeyList>().unwrap();
+				let result = yttrium::interpret_string(code.clone(), keys, environment);
 				match result {
 					Ok(result) => {
 						message.channel_id.say(&context.http, result.result.message).await.unwrap();
@@ -330,9 +335,13 @@ async fn main() {
 		return config.prefix(&bot_config.prefix);
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
-	client.data.write().await.insert::<Config>(Arc::new(RwLock::new(bot_config)));
+	let mut bot_data = client.data.write().await;
+	bot_data.insert::<Config>(Arc::new(RwLock::new(bot_config)));
 	let data = sqlx::SqlitePool::connect("./data.db").await.unwrap();
-	client.data.write().await.insert::<DB>(data);
+	bot_data.insert::<DB>(data);
+	let keys = yttrium::key_loader::load_keys();
+	bot_data.insert::<KeyList>(keys);
+	std::mem::drop(bot_data);
 	client.start().await.unwrap();
 }
 
@@ -350,4 +359,10 @@ struct DB;
 
 impl TypeMapKey for DB {
 	type Value = sqlx::sqlite::SqlitePool;
+}
+
+struct KeyList;
+
+impl TypeMapKey for KeyList {
+	type Value = std::collections::HashMap<String, Box<dyn yttrium_key_base::Key<SQLDatabaseManager, SQLDatabase> + Sync + Send>>;
 }
