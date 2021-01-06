@@ -2,6 +2,7 @@
 
 mod databases;
 mod match_engine;
+mod utilities;
 use std::sync::Arc;
 use sqlx::{Done, Row};
 use serde::{Deserialize, Serialize};
@@ -22,7 +23,7 @@ use databases::{
 };
 
 #[group]
-#[commands(execute, add, remove, show)]
+#[commands(execute, add, remove, show, event_add, event_remove, event_show)]
 struct General;
 
 #[command]
@@ -131,6 +132,145 @@ async fn show(context: &Context, message: &Message, mut args: Args) -> CommandRe
 		}
 		Ok(None) => {
 			message.channel_id.say(&context.http, "Trigger not found").await.unwrap();
+		}
+		Err(error) => {
+			eprintln!("{}", error);
+		}
+	}
+	return Ok(());
+}
+
+#[command]
+async fn event_add(context: &Context, message: &Message, mut args: Args) -> CommandResult {
+	let event;
+	match args.current() {
+		Some(ev) => {
+			match utilities::proper_event_name(ev) {
+				Some(ev) => {
+					event = String::from(ev);
+				}
+				None => {
+					message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+					return Ok(());
+				}
+			}
+		}
+		None => {
+			message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+			return Ok(());
+		}
+	}
+	args.advance();
+	let code = String::from(args.rest());
+	if code.is_empty() {
+		message.channel_id.say(&context.http, "You need to provide a response to the event").await.unwrap();
+	}
+	let keys = yttrium::key_loader::load_keys::<SQLDatabaseManager, SQLDatabase>();
+	match yttrium::tree_creator::create_ars_tree(code.clone(), &keys) {
+		Ok(tree) => {
+			match tree.warnings {
+				Some(warnings) => {
+					let mut output = String::new();
+					for warning in warnings {
+						match warning {
+							yttrium::errors_and_warns::Warning::UnclosedKeys => {
+								output.push_str("There are unclosed keys");
+							}
+						}
+					}
+					message.channel_id.say(&context.http, format!("Event added, but it has the following errors:\n {}", output)).await.unwrap();
+				}
+				None => {
+					message.channel_id.say(&context.http, "Event added").await.unwrap();
+				}
+			}
+			let guild_id = message.guild_id.unwrap();
+			let lock = context.data.write().await;
+			let db = lock.get::<DB>().unwrap();
+			sqlx::query(&format!("REPLACE INTO events VALUES (\"{}\", \"{}\", \"{}\")", event, guild_id, code)).execute(db).await.unwrap();
+		}
+		Err(error) => {
+			match error {
+				yttrium::errors_and_warns::Error::WrongAmountOfParameters => {
+					message.channel_id.say(&context.http, "One of your keys has invalid amount of parameters").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::EmptyParameter => {
+					message.channel_id.say(&context.http, "One of your keys has an empty parameter").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::NonexistentKey => {
+					message.channel_id.say(&context.http, "One of your keys does not exist").await.unwrap();
+				}
+				yttrium::errors_and_warns::Error::InterpretationError(_) => {}
+			}
+		}
+	}
+	return Ok(());
+}
+
+#[command]
+async fn event_remove(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let event;
+	match args.current() {
+		Some(ev) => {
+			match utilities::proper_event_name(ev) {
+				Some(ev) => {
+					event = ev;
+				}
+				None => {
+					message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+					return Ok(());
+				}
+			}
+		}
+		None => {
+			message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+			return Ok(());
+		}
+	}
+	let query = format!("DELETE FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
+		0 => {
+			message.channel_id.say(&context.http, "Event not found").await.unwrap();
+		}
+		_ => {
+			message.channel_id.say(&context.http, "Event deleted").await.unwrap();
+		}
+	}
+	return Ok(());
+}
+
+#[command]
+async fn event_show(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let event;
+	match args.current() {
+		Some(ev) => {
+			match utilities::proper_event_name(ev) {
+				Some(ev) => {
+					event = ev;
+				}
+				None => {
+					message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+					return Ok(());
+				}
+			}
+		}
+		None => {
+			message.channel_id.say(&context.http, "You need to provide a correct event type").await.unwrap();
+			return Ok(());
+		}
+	}
+	let query = format!("SELECT code FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
+	let lock = context.data.write().await;
+	let db = lock.get::<DB>().unwrap();
+	match sqlx::query(&query).fetch_optional(db).await {
+		Ok(Some(result)) => {
+			let code = result.get::<String, &str>("code");
+			message.channel_id.say(&context.http, format!("```\n{}\n```", code)).await.unwrap();
+		}
+		Ok(None) => {
+			message.channel_id.say(&context.http, "Event not found").await.unwrap();
 		}
 		Err(error) => {
 			eprintln!("{}", error);
