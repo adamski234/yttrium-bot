@@ -3,11 +3,12 @@
 mod databases;
 mod match_engine;
 mod utilities;
+mod bot_events;
+mod types;
 use std::sync::Arc;
 use sqlx::{Done, Row};
-use serde::{Deserialize, Serialize};
 use serenity::{
-	prelude::{RwLock, TypeMapKey},
+	prelude::RwLock,
 	client::Context,
 	model::channel::Message,
 	framework::standard::{
@@ -17,10 +18,7 @@ use serenity::{
 	}
 };
 use yttrium_key_base::environment::{Environment, events};
-use databases::{
-	SQLDatabase,
-	SQLDatabaseManager,
-};
+use types::*;
 
 #[group]
 #[commands(execute, add, remove, show, event_add, event_remove, event_show)]
@@ -334,7 +332,7 @@ async fn main() {
 	let framework = serenity::framework::StandardFramework::new().configure(|config| {
 		return config.prefix(&bot_config.prefix);
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
-	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).await.unwrap();
+	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
 	bot_data.insert::<Config>(Arc::new(RwLock::new(bot_config)));
 	let data = sqlx::SqlitePool::connect("./data.db").await.unwrap();
@@ -343,26 +341,4 @@ async fn main() {
 	bot_data.insert::<KeyList>(keys);
 	std::mem::drop(bot_data);
 	client.start().await.unwrap();
-}
-
-#[derive(Debug, Hash, Clone, Serialize, Deserialize)]
-struct Config {
-	token: String,
-	prefix: String,
-}
-
-impl TypeMapKey for Config {
-	type Value = Arc<RwLock<Config>>;
-}
-
-struct DB;
-
-impl TypeMapKey for DB {
-	type Value = sqlx::sqlite::SqlitePool;
-}
-
-struct KeyList;
-
-impl TypeMapKey for KeyList {
-	type Value = std::collections::HashMap<String, Box<dyn yttrium_key_base::Key<SQLDatabaseManager, SQLDatabase> + Sync + Send>>;
 }
