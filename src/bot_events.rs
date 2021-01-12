@@ -26,8 +26,15 @@ impl EventHandler for Handler {
 				let output = yttrium::interpret_string(code, keys, environment);
 				match output {
 					Ok(output) => {
-						//This should use environment.target
-						println!("{:#?}", output);
+						match output.warnings {
+							Some(warns) => {
+								let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+								output.result.target.say(&context.http, message).await.unwrap();
+							}
+							None => {
+								output.result.target.say(&context.http, output.result.message).await.unwrap();
+							}
+						}
 					}
 					Err(error) => {
 						unimplemented!("Error in channel_create: `{:#?}`", error);

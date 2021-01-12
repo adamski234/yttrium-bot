@@ -2269,7 +2269,7 @@ checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
 [[package]]
 name = "yttrium"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "serde_json",
@@ -2321,7 +2321,7 @@ dependencies = [
 [[package]]
 name = "yttrium_key_base"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "serde_json",
  "serenity",
@@ -2330,7 +2330,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_attach"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2338,7 +2338,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_ban"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2349,7 +2349,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_channel"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2360,7 +2360,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_db_read"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2368,7 +2368,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_db_write_str"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2376,7 +2376,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_delete"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "humantime",
@@ -2388,7 +2388,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_everyone"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2396,7 +2396,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_guild"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2407,7 +2407,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_hasrole"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2418,7 +2418,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_joined"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "serenity",
@@ -2428,7 +2428,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_kick"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "serenity",
@@ -2438,7 +2438,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_math"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "cxx",
  "cxx-build",
@@ -2448,7 +2448,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_mention"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "serenity",
@@ -2458,7 +2458,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_parameter"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2466,7 +2466,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_pin"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "serenity",
@@ -2476,7 +2476,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_rand"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "rand",
  "yttrium_key_base",
@@ -2485,7 +2485,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_redirect"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "regex",
  "yttrium_key_base",
@@ -2494,7 +2494,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_role"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2505,7 +2505,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_selfdelete"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "humantime",
  "yttrium_key_base",
@@ -2514,7 +2514,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_selfreact"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "regex",
  "serenity",
@@ -2525,7 +2525,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_setnickname"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2536,7 +2536,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_sleep"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "humantime",
  "yttrium_key_base",
@@ -2545,7 +2545,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_take"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
@@ -2556,7 +2556,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_text"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "glob",
  "regex",
@@ -2566,7 +2566,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_trigger"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "yttrium_key_base",
 ]
@@ -2574,7 +2574,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_user"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#41fc10ae8c25ab9d47588357ea2cd4e69d2883b8"
+source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
 dependencies = [
  "futures",
  "regex",
