@@ -10,10 +10,10 @@ edition = "2018"
 
 yttrium = { git = "https://github.com/adamski234/yttrium" }
 yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
-serenity = "0.9"
+serenity = "0.10"
 futures = "0.3"
 serde = "1"
 json5 = "0.3"
 regex = "1"
 sqlx = { version = "0.4", features = ["runtime-tokio-rustls", "sqlite"] }
-tokio = { version = "0.2", features = ["macros"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
