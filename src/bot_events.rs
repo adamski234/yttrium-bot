@@ -61,9 +61,73 @@ impl EventHandler for Handler {
 		}
 	}
 
-	async fn channel_delete(&self, _ctx: serenity::client::Context, _channel: &serenity::model::channel::GuildChannel) {}
+	async fn channel_delete(&self, context: serenity::client::Context, channel: &serenity::model::channel::GuildChannel) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		match get_event_code("ChannelDelete", &channel.guild_id.to_string(), db).await {
+			Some(code) => {
+				let db_manager = SQLDatabaseManager::new(channel.guild_id, db);
+				let event_info = events::EventType::ChannelDelete(events::ChannelDeleteEventInfo::new(channel.id));
+				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
+				let keys = lock.get::<KeyList>().unwrap();
+				let output = yttrium::interpret_string(code, keys, environment);
+				match output {
+					Ok(output) => {
+						match output.warnings {
+							Some(warns) => {
+								let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+								output.result.target.say(&context.http, message).await.unwrap();
+							}
+							None => {
+								output.result.target.say(&context.http, output.result.message).await.unwrap();
+							}
+						}
+					}
+					Err(error) => {
+						unimplemented!("Error in channel_create: `{:#?}`", error);
+					}
+				}
+			}
+			None => {
+				return;
+			}
+		}
+	}
 
-	async fn channel_update(&self, _ctx: serenity::client::Context, _old: Option<serenity::model::channel::Channel>, _new: serenity::model::channel::Channel) {}
+	async fn channel_update(&self, context: serenity::client::Context, _old: Option<serenity::model::channel::Channel>, channel: serenity::model::channel::Channel) {
+		let channel = channel.guild().unwrap();
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		match get_event_code("ChannelDelete", &channel.guild_id.to_string(), db).await {
+			Some(code) => {
+				let db_manager = SQLDatabaseManager::new(channel.guild_id, db);
+				let event_info = events::EventType::ChannelDelete(events::ChannelDeleteEventInfo::new(channel.id));
+				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
+				let keys = lock.get::<KeyList>().unwrap();
+				let output = yttrium::interpret_string(code, keys, environment);
+				match output {
+					Ok(output) => {
+						match output.warnings {
+							Some(warns) => {
+								let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+								output.result.target.say(&context.http, message).await.unwrap();
+							}
+							None => {
+								output.result.target.say(&context.http, output.result.message).await.unwrap();
+							}
+						}
+					}
+					Err(error) => {
+						unimplemented!("Error in channel_create: `{:#?}`", error);
+					}
+				}
+			}
+			None => {
+				return;
+			}
+		}
+	}
+	
 
 	async fn guild_member_addition(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _new_member: serenity::model::guild::Member) {}
 
