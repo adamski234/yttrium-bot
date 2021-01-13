@@ -8,17 +8,31 @@ use yttrium_key_base::environment::{
 use crate::types::*;
 use crate::databases::*;
 
+async fn get_event_code(event_name: &str, guild_id: &str, pool: &sqlx::SqlitePool) -> Option<String> {
+	let query = format!("SELECT code FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event_name, guild_id);
+	match sqlx::query(&query).fetch_optional(pool).await {
+		Ok(Some(result)) => {
+			return Some(result.get("code"));
+		}
+		Ok(None) => {
+			return None;
+		}
+		Err(error) => {
+			eprintln!("get_event_code: DB error with event: `{}` on guild `{}`: `{}`", event_name, guild_id, error);
+			return None;
+		}
+	}
+}
+
 pub struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
 	async fn channel_create(&self, context: serenity::client::Context, channel: &serenity::model::channel::GuildChannel) {
-		let query = format!("SELECT code FROM events WHERE event = \"ChannelCreate\" AND guild_id = \"{}\"", channel.guild_id);
 		let lock = context.data.read().await;
 		let db = lock.get::<DB>().unwrap();
-		match sqlx::query(&query).fetch_optional(db).await {
-			Ok(Some(result)) => {
-				let code: String = result.get("code");
+		match get_event_code("ChannelCreate", &channel.guild_id.to_string(), db).await {
+			Some(code) => {
 				let db_manager = SQLDatabaseManager::new(channel.guild_id, db);
 				let event_info = events::EventType::ChannelCreate(events::ChannelCreateEventInfo::new(channel.id));
 				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
@@ -41,11 +55,7 @@ impl EventHandler for Handler {
 					}
 				}
 			}
-			Ok(None) => {
-				return;
-			}
-			Err(error) => {
-				eprintln!("DB error: `{}`", error);
+			None => {
 				return;
 			}
 		}
