@@ -1,5 +1,3 @@
-use sqlx::Row;
-
 pub struct SQLDatabase {
 	guild_id: serenity::model::id::GuildId,
 	name: String,
@@ -28,11 +26,12 @@ impl SQLDatabaseManager {
 
 impl yttrium_key_base::databases::Database for SQLDatabase {
     fn get_key(&self, name: &str) -> Option<yttrium_key_base::databases::StringOrArray> {
-		let query = format!("SELECT key_value FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
-		let result = futures::executor::block_on(sqlx::query(&query).fetch_one(&self.pool));
+		let guild_id = self.guild_id.to_string();
+		let query = sqlx::query!("SELECT key_value FROM databases WHERE name = ? AND guild_id = ? AND key_name = ?", self.name, guild_id, name);
+		let result = futures::executor::block_on(query.fetch_one(&self.pool));
 		match result {
 			Ok(result) => {
-				let content = result.get::<String, &str>("key_value");
+				let content = result.key_value;
 				return Some(yttrium_key_base::databases::StringOrArray::String(content));
 			}
 			Err(error) => {
@@ -52,18 +51,21 @@ impl yttrium_key_base::databases::Database for SQLDatabase {
 				todo!();
 			}
 		}
-		let query = format!("REPLACE INTO databases VALUES (\"{}\", \"{}\", \"{}\", \"{}\")", self.name, self.guild_id, name, to_insert);
-		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
+		let guild_id = self.guild_id.to_string();
+		let query = sqlx::query!("REPLACE INTO databases VALUES (?, ?, ?, ?)", self.name, guild_id, name, to_insert);
+		futures::executor::block_on(query.execute(&self.pool)).unwrap();
     }
 
     fn remove_key(&mut self, name: &str) {
-        let query = format!("DELETE FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
-		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
+		let guild_id = self.guild_id.to_string();
+        let query = sqlx::query!("DELETE FROM databases WHERE name = ? AND guild_id = ? AND key_name = ?", self.name, guild_id, name);
+		futures::executor::block_on(query.execute(&self.pool)).unwrap();
     }
 
     fn key_exists(&self, name: &str) -> bool {
-		let query = format!("SELECT name FROM databases WHERE name = {} AND guild_id = {} AND key_name = {}", self.name, self.guild_id, name);
-		let result = futures::executor::block_on(sqlx::query(&query).fetch_optional(&self.pool));
+		let guild_id = self.guild_id.to_string();
+		let query = sqlx::query!("SELECT name FROM databases WHERE name = ? AND guild_id = ? AND key_name = ?", self.name, guild_id, name);
+		let result = futures::executor::block_on(query.fetch_optional(&self.pool));
 		match result {
 			Ok(Some(_)) => {
 				return true;
@@ -85,13 +87,15 @@ impl yttrium_key_base::databases::DatabaseManager<SQLDatabase> for SQLDatabaseMa
 	}
 
 	fn remove_database(&mut self, name: &str) {
-		let query = format!("DELETE FROM databases WHERE name = {} AND guild_id = {}", name, self.guild_id);
-		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
+		let guild_id = self.guild_id.to_string();
+		let query = sqlx::query!("DELETE FROM databases WHERE name = ? AND guild_id = ?", name, guild_id);
+		futures::executor::block_on(query.execute(&self.pool)).unwrap();
 	}
 
 	fn clear_database(&mut self, name: &str) {
-		let query = format!("DELETE FROM databases WHERE name = {} AND guild_id = {}", name, self.guild_id);
-		futures::executor::block_on(sqlx::query(&query).execute(&self.pool)).unwrap();
+		let guild_id = self.guild_id.to_string();
+		let query = sqlx::query!("DELETE FROM databases WHERE name = ? AND guild_id = ?", name, guild_id);
+		futures::executor::block_on(query.execute(&self.pool)).unwrap();
 	}
 }
 

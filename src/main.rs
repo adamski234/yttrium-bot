@@ -6,7 +6,7 @@ mod utilities;
 mod bot_events;
 mod types;
 use std::sync::Arc;
-use sqlx::{Done, Row};
+use sqlx::Done;
 use serenity::{
 	prelude::RwLock,
 	client::Context,
@@ -66,10 +66,10 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 					message.channel_id.say(&context.http, "Trigger added").await.unwrap();
 				}
 			}
-			let guild_id = message.guild_id.unwrap();
+			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
 			let db = lock.get::<DB>().unwrap();
-			sqlx::query(&format!("REPLACE INTO triggers VALUES (\"{}\", \"{}\", \"{}\")", trigger, code, guild_id)).execute(db).await.unwrap();
+			sqlx::query!("REPLACE INTO triggers VALUES (?, ?, ?)", trigger, code, guild_id).execute(db).await.unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -92,10 +92,11 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 #[command]
 async fn remove(context: &Context, message: &Message, args: Args) -> CommandResult {
 	let trigger = args.parse::<String>().unwrap();
-	let query = format!("DELETE FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
+	let guild_id = message.guild_id.unwrap().to_string();
+	let query = sqlx::query!("DELETE FROM triggers WHERE trigger = ? AND guild_id = ?", trigger, guild_id);
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
-	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
+	match query.execute(db).await.unwrap().rows_affected() {
 		0 => {
 			message.channel_id.say(&context.http, "Trigger not found").await.unwrap();
 		}
@@ -110,12 +111,13 @@ async fn remove(context: &Context, message: &Message, args: Args) -> CommandResu
 async fn show(context: &Context, message: &Message, mut args: Args) -> CommandResult {
 	args.quoted();
 	let trigger = args.parse::<String>().unwrap();
-	let query = format!("SELECT code FROM triggers WHERE trigger = \"{}\" AND guild_id = \"{}\"", trigger, message.guild_id.unwrap());
+	let guild_id = message.guild_id.unwrap().to_string();
+	let query = sqlx::query!("SELECT code FROM triggers WHERE trigger = ? AND guild_id = ?", trigger, guild_id);
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
-	match sqlx::query(&query).fetch_optional(db).await {
+	match query.fetch_optional(db).await {
 		Ok(Some(result)) => {
-			let code = result.get::<String, &str>("code");
+			let code = result.code;
 			let trigger_type = match_engine::MatchType::new(trigger);
 			match trigger_type {
 				match_engine::MatchType::Literal(_) => {
@@ -185,11 +187,11 @@ async fn event_add(context: &Context, message: &Message, mut args: Args) -> Comm
 					message.channel_id.say(&context.http, "Event added").await.unwrap();
 				}
 			}
-			let guild_id = message.guild_id.unwrap();
+			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
 			let db = lock.get::<DB>().unwrap();
-			let query = format!("REPLACE INTO events VALUES (\"{}\", \"{}\", \"{}\")", event, guild_id, code);
-			sqlx::query(&query).execute(db).await.unwrap();
+			let query = sqlx::query!("REPLACE INTO events VALUES (?, ?, ?)", event, guild_id, code);
+			query.execute(db).await.unwrap();
 		}
 		Err(error) => {
 			match error {
@@ -229,10 +231,11 @@ async fn event_remove(context: &Context, message: &Message, args: Args) -> Comma
 			return Ok(());
 		}
 	}
-	let query = format!("DELETE FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
+	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
-	match sqlx::query(&query).execute(db).await.unwrap().rows_affected() {
+	let query = sqlx::query!("DELETE FROM events WHERE event = ? AND guild_id = ?", event, guild_id);
+	match query.execute(db).await.unwrap().rows_affected() {
 		0 => {
 			message.channel_id.say(&context.http, "Event not found").await.unwrap();
 		}
@@ -263,12 +266,13 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 			return Ok(());
 		}
 	}
-	let query = format!("SELECT code FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event, message.guild_id.unwrap());
+	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
-	match sqlx::query(&query).fetch_optional(db).await {
+	let query = sqlx::query!("SELECT code FROM events WHERE event = ? AND guild_id = ?", event, guild_id);
+	match query.fetch_optional(db).await {
 		Ok(Some(result)) => {
-			let code = result.get::<String, &str>("code");
+			let code = result.code;
 			message.channel_id.say(&context.http, format!("```\n{}\n```", code)).await.unwrap();
 		}
 		Ok(None) => {
@@ -283,14 +287,14 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 
 #[hook]
 async fn normal_message_hook(context: &Context, message: &Message) {
-	let guild_id = message.guild_id.unwrap();
+	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
-	let query = format!("SELECT trigger, code FROM triggers WHERE guild_id = \"{}\"", guild_id);
-	let result = sqlx::query(&query).fetch_all(db).await.unwrap();
+	let query = sqlx::query!("SELECT trigger, code FROM triggers WHERE guild_id = ?", guild_id);
+	let result = query.fetch_all(db).await.unwrap();
 	for row in result {
-		let trigger: String = row.get("trigger");
-		let code: String = row.get("code");
+		let trigger = row.trigger;
+		let code = row.code;
 		//Starting with nothing: starting literal
 		//Starting with `&`: literal
 		//Starting with `?`: regex
@@ -335,7 +339,7 @@ async fn main() {
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
 	bot_data.insert::<Config>(Arc::new(RwLock::new(bot_config)));
-	let data = sqlx::SqlitePool::connect("./data.db").await.unwrap();
+	let data = sqlx::SqlitePool::connect(&std::env::var("DATABASE_URL").unwrap()).await.unwrap();
 	bot_data.insert::<DB>(data);
 	let keys = yttrium::key_loader::load_keys();
 	bot_data.insert::<KeyList>(keys);

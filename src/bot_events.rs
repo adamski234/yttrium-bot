@@ -1,6 +1,5 @@
 use serenity::client::EventHandler;
 use serenity::async_trait;
-use sqlx::Row;
 use yttrium_key_base::environment::{
 	Environment,
 	events,
@@ -9,10 +8,10 @@ use crate::types::*;
 use crate::databases::*;
 
 async fn get_event_code(event_name: &str, guild_id: &str, pool: &sqlx::SqlitePool) -> Option<String> {
-	let query = format!("SELECT code FROM events WHERE event = \"{}\" AND guild_id = \"{}\"", event_name, guild_id);
-	match sqlx::query(&query).fetch_optional(pool).await {
+	let query = sqlx::query!("SELECT code FROM events WHERE event = ? AND guild_id = ?", event_name, guild_id);
+	match query.fetch_optional(pool).await {
 		Ok(Some(result)) => {
-			return Some(result.get("code"));
+			return Some(result.code);
 		}
 		Ok(None) => {
 			return None;
