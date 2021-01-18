@@ -37,7 +37,7 @@ impl EventHandler for Handler {
 				let event_info = events::EventType::ChannelCreate(events::ChannelCreateEventInfo::new(channel.id));
 				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 				let keys = lock.get::<KeyList>().unwrap();
-				let output = yttrium::interpret_string(code, keys, environment);
+				let output = yttrium::interpret_string(code, keys, environment).await;
 				match output {
 					Ok(output) => {
 						match output.warnings {
@@ -70,7 +70,7 @@ impl EventHandler for Handler {
 				let event_info = events::EventType::ChannelDelete(events::ChannelDeleteEventInfo::new(channel.id));
 				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 				let keys = lock.get::<KeyList>().unwrap();
-				let output = yttrium::interpret_string(code, keys, environment);
+				let output = yttrium::interpret_string(code, keys, environment).await;
 				match output {
 					Ok(output) => {
 						match output.warnings {
@@ -104,7 +104,7 @@ impl EventHandler for Handler {
 				let event_info = events::EventType::ChannelDelete(events::ChannelDeleteEventInfo::new(channel.id));
 				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 				let keys = lock.get::<KeyList>().unwrap();
-				let output = yttrium::interpret_string(code, keys, environment);
+				let output = yttrium::interpret_string(code, keys, environment).await;
 				match output {
 					Ok(output) => {
 						match output.warnings {

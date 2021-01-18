@@ -59,7 +59,7 @@ dependencies = [
  "futures-util",
  "log",
  "pin-project 1.0.4",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tokio-rustls 0.22.0",
  "tungstenite",
  "webpki-roots 0.20.0",
@@ -187,9 +187,9 @@ dependencies = [
 
 [[package]]
 name = "cargo_metadata"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11a47b6286279a9998588ef7050d1ebc2500c69892a557c90fe5d071c64415dc"
+checksum = "7714a157da7991e23d90686b9524b9e12e0407a108647f52e9328f4b3d51ac7f"
 dependencies = [
  "cargo-platform",
  "semver",
@@ -308,9 +308,9 @@ dependencies = [
 
 [[package]]
 name = "cxx"
-version = "1.0.27"
+version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48879da186f5f8e1266d26956c31ad49080934de92c5f97994be6c014f17ca9d"
+checksum = "e883a8d7045e0951396f6eaf1663b2cef25d376dfbe94a346c4544293cd1f69a"
 dependencies = [
  "cc",
  "cxxbridge-flags",
@@ -320,9 +320,9 @@ dependencies = [
 
 [[package]]
 name = "cxx-build"
-version = "1.0.27"
+version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bdd511400d49f9d72d5494f2108143dbafcd8f978dfe414f9c6d16557a5349f"
+checksum = "da7b5a1416a3c18cd6bd0c85056623603cbc238c4b7856cbf882f5e4e8f42c1c"
 dependencies = [
  "cc",
  "codespan-reporting",
@@ -335,15 +335,15 @@ dependencies = [
 
 [[package]]
 name = "cxxbridge-flags"
-version = "1.0.27"
+version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "867d5ade1c77467f4b51446a00180ce6d9e9e1998e701b619dbbe6a838143ad9"
+checksum = "92419eb95a45a3beb3dfdc01f408683bbb7bcb944e91337e16dd3f70f72b3384"
 
 [[package]]
 name = "cxxbridge-macro"
-version = "1.0.27"
+version = "1.0.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ddc7ee92a676fab169c94696317ce5cfdb8aa13c2c1cdb82bff85650be18b93"
+checksum = "c28ff71a9f0b8ab62b595c9ec9ac90d35ff550f02973372509cb2dda532492f0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -447,9 +447,9 @@ checksum = "fed34cd105917e91daa4da6b3728c47b068749d6a62c59811f06ed2ac71d9da7"
 
 [[package]]
 name = "futures"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "309f13e3f4be6d5917178c84db67c0b9a09177ac16d4f9a7313a767a68adaa77"
+checksum = "da9052a1a50244d8d5aa9bf55cbc2fb6f357c86cc52e46c62ed390a7180cf150"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -462,9 +462,9 @@ dependencies = [
 
 [[package]]
 name = "futures-channel"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7a3b03bd32f6ec7885edeb99acd1e47e20e34fd4dfd3c6deed6fcac8a9d28f6a"
+checksum = "f2d31b7ec7efab6eefc7c57233bb10b847986139d88cc2f5a02a1ae6871a1846"
 dependencies = [
  "futures-core",
  "futures-sink",
@@ -472,15 +472,15 @@ dependencies = [
 
 [[package]]
 name = "futures-core"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ed8aeae2b6ab243ebabe6f54cd4cf53054d98883d5d326128af7d57a9ca5cd3d"
+checksum = "79e5145dde8da7d1b3892dad07a9c98fc04bc39892b1ecc9692cf53e2b780a65"
 
 [[package]]
 name = "futures-executor"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f7836b36b7533d16fd5937311d98ba8965ab81030de8b0024c299dd5d51fb9b"
+checksum = "e9e59fdc009a4b3096bf94f740a0f2424c082521f20a9b08c5c07c48d90fd9b9"
 dependencies = [
  "futures-core",
  "futures-task",
@@ -489,15 +489,15 @@ dependencies = [
 
 [[package]]
 name = "futures-io"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d41234e71d5e8ca73d01563974ef6f50e516d71e18f1a2f1184742e31f5d469f"
+checksum = "28be053525281ad8259d47e4de5de657b25e7bac113458555bb4b70bc6870500"
 
 [[package]]
 name = "futures-macro"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3520e0eb4e704e88d771b92d51273ee212997f0d8282f17f5d8ff1cb39104e42"
+checksum = "c287d25add322d9f9abdcdc5927ca398917996600182178774032e9f8258fedd"
 dependencies = [
  "proc-macro-hack",
  "proc-macro2",
@@ -507,24 +507,24 @@ dependencies = [
 
 [[package]]
 name = "futures-sink"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c72d188479368953c6c8c7140e40d7a4401674ab3b98a41e60e515d6cbdbe5de"
+checksum = "caf5c69029bda2e743fddd0582d1083951d65cc9539aebf8812f36c3491342d6"
 
 [[package]]
 name = "futures-task"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08944cea9021170d383287169859c0ca8147d9ec285978393109954448f33cc7"
+checksum = "13de07eb8ea81ae445aca7b69f5f7bf15d7bf4912d8ca37d6645c77ae8a58d86"
 dependencies = [
  "once_cell",
 ]
 
 [[package]]
 name = "futures-util"
-version = "0.3.10"
+version = "0.3.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3dd206efbe2ca683b2ce138ccdf61e1b0a63f5816dcedc9d8654c500ba0cea6"
+checksum = "632a8cd0f2a4b3fdea1657f08bde063848c3bd00f9bbf6e256b8be78802e624b"
 dependencies = [
  "futures-channel",
  "futures-core",
@@ -601,7 +601,7 @@ dependencies = [
  "http",
  "indexmap",
  "slab",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tokio-util",
  "tracing",
  "tracing-futures",
@@ -636,9 +636,9 @@ dependencies = [
 
 [[package]]
 name = "hermit-abi"
-version = "0.1.17"
+version = "0.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5aca5565f760fb5b220e499d72710ed156fdb74e631659e99377d9ebfbd13ae8"
+checksum = "322f4de77956e22ed0e5032c359a0f1273f1f7f0d79bfa3b8ffbc730d7fbcc5c"
 dependencies = [
  "libc",
 ]
@@ -684,9 +684,9 @@ checksum = "494b4d60369511e7dea41cf646832512a94e542f68bb9c49e54518e0f468eb47"
 
 [[package]]
 name = "humantime"
-version = "2.0.1"
+version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c1ad908cc71012b7bea4d0c53ba96a8cba9962f048fa68d143376143d863b7a"
+checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
 
 [[package]]
 name = "hyper"
@@ -706,7 +706,7 @@ dependencies = [
  "itoa",
  "pin-project 1.0.4",
  "socket2",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tower-service",
  "tracing",
  "want",
@@ -722,7 +722,7 @@ dependencies = [
  "hyper",
  "log",
  "rustls 0.19.0",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tokio-rustls 0.22.0",
  "webpki",
 ]
@@ -1220,9 +1220,9 @@ checksum = "dbf0c48bc1d91375ae5c3cd81e3722dff1abcf81a30960240640d223f59fe0e5"
 
 [[package]]
 name = "proc-macro-nested"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eba180dafb9038b050a4c280019bbedf9f2467b61e5d892dcad585bb57aadc5a"
+checksum = "bc881b2c22681370c6a780e47af9840ef841837bc98118431d4e1868bd0c1086"
 
 [[package]]
 name = "proc-macro2"
@@ -1256,9 +1256,21 @@ checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
 dependencies = [
  "getrandom 0.1.16",
  "libc",
- "rand_chacha",
- "rand_core",
- "rand_hc",
+ "rand_chacha 0.2.2",
+ "rand_core 0.5.1",
+ "rand_hc 0.2.0",
+]
+
+[[package]]
+name = "rand"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18519b42a40024d661e1714153e9ad0c3de27cd495760ceb09710920f1098b1e"
+dependencies = [
+ "libc",
+ "rand_chacha 0.3.0",
+ "rand_core 0.6.1",
+ "rand_hc 0.3.0",
 ]
 
 [[package]]
@@ -1268,7 +1280,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
 dependencies = [
  "ppv-lite86",
- "rand_core",
+ "rand_core 0.5.1",
+]
+
+[[package]]
+name = "rand_chacha"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e12735cf05c9e10bf21534da50a147b924d555dc7a547c42e6bb2d5b6017ae0d"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.6.1",
 ]
 
 [[package]]
@@ -1281,12 +1303,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "rand_core"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c026d7df8b298d90ccbbc5190bd04d85e159eaf5576caeacf8741da93ccbd2e5"
+dependencies = [
+ "getrandom 0.2.1",
+]
+
+[[package]]
 name = "rand_hc"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca3129af7b92a17112d59ad498c6f81eaf463253766b90396d39ea7a39d6613c"
 dependencies = [
- "rand_core",
+ "rand_core 0.5.1",
+]
+
+[[package]]
+name = "rand_hc"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3190ef7066a446f2e7f42e239d161e905420ccab01eb967c9eb27d21b2322a73"
+dependencies = [
+ "rand_core 0.6.1",
 ]
 
 [[package]]
@@ -1340,7 +1380,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tokio-rustls 0.22.0",
  "url",
  "wasm-bindgen",
@@ -1501,7 +1541,7 @@ dependencies = [
  "serde",
  "serde_json",
  "static_assertions",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tracing",
  "tracing-futures",
  "typemap_rev",
@@ -1791,9 +1831,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.0.1"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d258221f566b6c803c7b4714abadc080172b272090cdc5e244a6d4dd13c3a6bd"
+checksum = "0ca04cec6ff2474c638057b65798f60ac183e5e79d3448bb7163d36a39cff6ec"
 dependencies = [
  "autocfg",
  "bytes 1.0.1",
@@ -1846,7 +1886,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc6844de72e57df1980054b38be3a9f4702aba4858be64dd700181a8a6d0e1b6"
 dependencies = [
  "rustls 0.19.0",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "webpki",
 ]
 
@@ -1858,7 +1898,7 @@ checksum = "76066865172052eb8796c686f0b441a93df8b08d40a950b062ffb9a426f00edd"
 dependencies = [
  "futures-core",
  "pin-project-lite 0.2.4",
- "tokio 1.0.1",
+ "tokio 1.0.2",
 ]
 
 [[package]]
@@ -1872,7 +1912,7 @@ dependencies = [
  "futures-sink",
  "log",
  "pin-project-lite 0.2.4",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "tokio-stream",
 ]
 
@@ -1943,7 +1983,7 @@ dependencies = [
  "httparse",
  "input_buffer",
  "log",
- "rand",
+ "rand 0.7.3",
  "sha-1 0.9.2",
  "url",
  "utf-8",
@@ -2190,9 +2230,9 @@ dependencies = [
 
 [[package]]
 name = "whoami"
-version = "1.0.3"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d595b2e146f36183d6a590b8d41568e2bc84c922267f43baf61c956330eeb436"
+checksum = "1a921c0ad578a51c0b6c0bbb9b95f0ed11e90d61da506139e48a946edd11ee1e"
 dependencies = [
  "wasm-bindgen",
  "web-sys",
@@ -2269,38 +2309,17 @@ checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
 [[package]]
 name = "yttrium"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
+source = "git+https://github.com/adamski234/yttrium#a9020a62ab2a8b30367e0967f6bdbaff183050f9"
 dependencies = [
- "futures",
- "serde_json",
+ "glob",
+ "humantime",
+ "rand 0.8.2",
+ "regex",
  "serenity",
+ "tokio 1.0.2",
+ "unicode-segmentation",
  "yttrium_key_base",
- "yttrium_std_attach",
- "yttrium_std_ban",
- "yttrium_std_channel",
- "yttrium_std_db_read",
- "yttrium_std_db_write_str",
- "yttrium_std_delete",
- "yttrium_std_everyone",
- "yttrium_std_guild",
- "yttrium_std_hasrole",
- "yttrium_std_joined",
- "yttrium_std_kick",
  "yttrium_std_math",
- "yttrium_std_mention",
- "yttrium_std_parameter",
- "yttrium_std_pin",
- "yttrium_std_rand",
- "yttrium_std_redirect",
- "yttrium_std_role",
- "yttrium_std_selfdelete",
- "yttrium_std_selfreact",
- "yttrium_std_setnickname",
- "yttrium_std_sleep",
- "yttrium_std_take",
- "yttrium_std_text",
- "yttrium_std_trigger",
- "yttrium_std_user",
 ]
 
 [[package]]
@@ -2313,7 +2332,7 @@ dependencies = [
  "serde",
  "serenity",
  "sqlx",
- "tokio 1.0.1",
+ "tokio 1.0.2",
  "yttrium",
  "yttrium_key_base",
 ]
@@ -2321,263 +2340,19 @@ dependencies = [
 [[package]]
 name = "yttrium_key_base"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
+source = "git+https://github.com/adamski234/yttrium#a9020a62ab2a8b30367e0967f6bdbaff183050f9"
 dependencies = [
  "serde_json",
  "serenity",
 ]
 
 [[package]]
-name = "yttrium_std_attach"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_ban"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_channel"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_db_read"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_db_write_str"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_delete"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "humantime",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_everyone"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_guild"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_hasrole"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_joined"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_kick"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
 name = "yttrium_std_math"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
+source = "git+https://github.com/adamski234/yttrium#a9020a62ab2a8b30367e0967f6bdbaff183050f9"
 dependencies = [
  "cxx",
  "cxx-build",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_mention"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_parameter"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_pin"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_rand"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "rand",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_redirect"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "regex",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_role"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_selfdelete"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "humantime",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_selfreact"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "regex",
- "serenity",
- "unicode-segmentation",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_setnickname"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_sleep"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "humantime",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_take"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
- "serenity",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_text"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "glob",
- "regex",
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_trigger"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "yttrium_key_base",
-]
-
-[[package]]
-name = "yttrium_std_user"
-version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#d1e570fa1d28f2ecb491d19bd1158d2fe6981379"
-dependencies = [
- "futures",
- "regex",
  "serenity",
  "yttrium_key_base",
 ]
