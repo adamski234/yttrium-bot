@@ -1,3 +1,6 @@
+#![allow(clippy::needless_return)]
+#![allow(clippy::redundant_field_names)]
+
 #![feature(with_options)]
 
 mod databases;
@@ -299,31 +302,28 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 		//Starting with `&`: literal
 		//Starting with `?`: regex
 		let trigger_type = match_engine::MatchType::new(trigger);
-		match match_engine::check_match(&message.content, trigger_type) {
-			Some(result) => {
-				let parameter = result.rest;
-				let trigger = result.matched;
-				let data = context.data.read().await;
-				let pool = data.get::<DB>().unwrap();
-				let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
-				let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
-				let event = yttrium_key_base::environment::events::EventType::Message(event_info);
-				let environment = Environment::new(event, message.guild_id.unwrap().clone(), context, db_manager);
-				let keys = lock.get::<KeyList>().unwrap();
-				let result = yttrium::interpret_string(code.clone(), keys, environment).await;
-				match result {
-					Ok(result) => {
-						message.channel_id.say(&context.http, result.result.message).await.unwrap();
-					}
-					Err(error) => {
-						if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {
-							message.channel_id.say(&context.http, format!("An error happened during interpretation: `{}`", error)).await.unwrap();
-						}
+			if let Some(result) = match_engine::check_match(&message.content, trigger_type) {
+			let parameter = result.rest;
+			let trigger = result.matched;
+			let data = context.data.read().await;
+			let pool = data.get::<DB>().unwrap();
+			let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
+			let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
+			let event = yttrium_key_base::environment::events::EventType::Message(event_info);
+			let environment = Environment::new(event, message.guild_id.unwrap(), context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let result = yttrium::interpret_string(code.clone(), keys, environment).await;
+			match result {
+				Ok(result) => {
+					message.channel_id.say(&context.http, result.result.message).await.unwrap();
+				}
+				Err(error) => {
+					if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {
+						message.channel_id.say(&context.http, format!("An error happened during interpretation: `{}`", error)).await.unwrap();
 					}
 				}
-				return;
 			}
-			None => {}
+			return;
 		}
 	}
 }

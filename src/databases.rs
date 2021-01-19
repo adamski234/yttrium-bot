@@ -83,7 +83,7 @@ impl yttrium_key_base::databases::Database for SQLDatabase {
 
 impl yttrium_key_base::databases::DatabaseManager<SQLDatabase> for SQLDatabaseManager {
 	fn get_database(&mut self, name: &str) -> SQLDatabase {
-		return SQLDatabase::new(self.guild_id.clone(), self.pool.clone(), String::from(name))
+		return SQLDatabase::new(self.guild_id, self.pool.clone(), String::from(name))
 	}
 
 	fn remove_database(&mut self, name: &str) {

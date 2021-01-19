@@ -6,7 +6,7 @@ pub fn check_match(text: &str, to_check: MatchType) -> Option<MatchResult> {
 				let index = text.find(&matcher).unwrap();
 				let rest = text.replacen(&matcher, "", 1);
 				return Some(MatchResult {
-					matched: matcher.clone(),
+					matched: matcher,
 					index: index,
 					rest: rest,
 				});
@@ -19,7 +19,7 @@ pub fn check_match(text: &str, to_check: MatchType) -> Option<MatchResult> {
 				let index: usize = 0;
 				let rest = text.replacen(&matcher, "", 1);
 				return Some(MatchResult {
-					matched: matcher.clone(),
+					matched: matcher,
 					index: index,
 					rest: rest,
 				});
@@ -55,6 +55,7 @@ pub struct MatchResult {
 	pub index: usize,
 }
 
+#[allow(clippy::large_enum_variant)]
 pub enum MatchType {
 	Literal(String),
 	StartingLiteral(String),
