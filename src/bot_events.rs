@@ -38,13 +38,17 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("ChannelDelete did not return a valid channel");
+						return;
+					}
 					match output.warnings {
 						Some(warns) => {
 							let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.say(&context.http, message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
 						}
 						None => {
-							output.result.target.say(&context.http, output.result.message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
 						}
 					}
 				}
@@ -66,13 +70,17 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("ChannelDelete did not return a valid channel");
+						return;
+					}
 					match output.warnings {
 						Some(warns) => {
 							let message = format!("ChannelDelete event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.say(&context.http, message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
 						}
 						None => {
-							output.result.target.say(&context.http, output.result.message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
 						}
 					}
 				}
@@ -95,13 +103,17 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("ChannelUpdate did not return a valid channel");
+						return;
+					}
 					match output.warnings {
 						Some(warns) => {
 							let message = format!("ChannelUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.say(&context.http, message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
 						}
 						None => {
-							output.result.target.say(&context.http, output.result.message).await.unwrap();
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
 						}
 					}
 				}
@@ -113,11 +125,102 @@ impl EventHandler for Handler {
 	}
 	
 
-	async fn guild_member_addition(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _new_member: serenity::model::guild::Member) {}
+	async fn guild_member_addition(&self, context: serenity::client::Context, guild_id: serenity::model::id::GuildId, new_member: serenity::model::guild::Member) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("MemberJoin", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::MemberJoin(events::MemberJoinEventInfo::new(new_member.user.id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("MemberJoin did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("MemberJoin event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in MemberJoin: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn guild_member_removal(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _user: serenity::model::prelude::User, _member_data_if_available: Option<serenity::model::guild::Member>) {}
+	async fn guild_member_removal(&self, context: serenity::client::Context, guild_id: serenity::model::id::GuildId, user: serenity::model::prelude::User, _member_data_if_available: Option<serenity::model::guild::Member>) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("MemberLeave", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::MemberLeave(events::MemberLeaveEventInfo::new(user.id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("MemberLeave did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("MemberLeave event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in MemberLeave: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn guild_member_update(&self, _ctx: serenity::client::Context, _old_if_available: Option<serenity::model::guild::Member>, _new: serenity::model::guild::Member) {}
+	async fn guild_member_update(&self, context: serenity::client::Context, _old_if_available: Option<serenity::model::guild::Member>, member: serenity::model::guild::Member) {
+		let guild_id = member.guild_id;
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("MemberUpdate", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::MemberUpdate(events::MemberUpdateEventInfo::new(member.user.id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("MemberUpdate did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("MemberUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in MemberUpdate: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
 	async fn guild_role_create(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _new: serenity::model::guild::Role) {}
 
