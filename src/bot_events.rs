@@ -97,10 +97,10 @@ impl EventHandler for Handler {
 		let channel = channel.guild().unwrap();
 		let lock = context.data.read().await;
 		let db = lock.get::<DB>().unwrap();
-		match get_event_code("ChannelDelete", &channel.guild_id.to_string(), db).await {
+		match get_event_code("ChannelUpdate", &channel.guild_id.to_string(), db).await {
 			Some(code) => {
 				let db_manager = SQLDatabaseManager::new(channel.guild_id, db);
-				let event_info = events::EventType::ChannelDelete(events::ChannelDeleteEventInfo::new(channel.id));
+				let event_info = events::EventType::ChannelUpdate(events::ChannelUpdateEventInfo::new(channel.id));
 				let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 				let keys = lock.get::<KeyList>().unwrap();
 				let output = yttrium::interpret_string(code, keys, environment).await;

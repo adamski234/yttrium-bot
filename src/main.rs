@@ -339,7 +339,7 @@ async fn main() {
 	let mut client = serenity::Client::builder(&bot_config.token).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
 	bot_data.insert::<Config>(Arc::new(RwLock::new(bot_config)));
-	let data = sqlx::SqlitePool::connect(&std::env::var("DATABASE_URL").unwrap()).await.unwrap();
+	let data = sqlx::SqlitePool::connect(env!("DATABASE_URL")).await.unwrap();
 	bot_data.insert::<DB>(data);
 	let keys = yttrium::key_loader::load_keys();
 	bot_data.insert::<KeyList>(keys);
