@@ -68,7 +68,7 @@ impl EventHandler for Handler {
 				Ok(output) => {
 					match output.warnings {
 						Some(warns) => {
-							let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							let message = format!("ChannelDelete event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
 							output.result.target.say(&context.http, message).await.unwrap();
 						}
 						None => {
@@ -97,7 +97,7 @@ impl EventHandler for Handler {
 				Ok(output) => {
 					match output.warnings {
 						Some(warns) => {
-							let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							let message = format!("ChannelUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
 							output.result.target.say(&context.http, message).await.unwrap();
 						}
 						None => {
