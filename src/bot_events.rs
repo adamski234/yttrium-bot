@@ -49,7 +49,7 @@ impl EventHandler for Handler {
 					}
 				}
 				Err(error) => {
-					unimplemented!("Error in channel_create: `{:#?}`", error);
+					unimplemented!("Error in ChannelCreate: `{:#?}`", error);
 				}
 			}
 		}
@@ -77,7 +77,7 @@ impl EventHandler for Handler {
 					}
 				}
 				Err(error) => {
-					unimplemented!("Error in channel_create: `{:#?}`", error);
+					unimplemented!("Error in ChannelDelete: `{:#?}`", error);
 				}
 			}
 		}
@@ -106,7 +106,7 @@ impl EventHandler for Handler {
 					}
 				}
 				Err(error) => {
-					unimplemented!("Error in channel_create: `{:#?}`", error);
+					unimplemented!("Error in ChannelUpdate: `{:#?}`", error);
 				}
 			}
 		}
