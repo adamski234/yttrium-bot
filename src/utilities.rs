@@ -16,6 +16,9 @@ pub fn proper_event_name(original: &str) -> Option<&str> {
 		"roleupdate" => {
 			return Some("RoleUpdate");
 		}
+		"roledelete" => {
+			return Some("RoleDelete");
+		}
 		"channelcreate" => {
 			return Some("ChannelCreate");
 		}

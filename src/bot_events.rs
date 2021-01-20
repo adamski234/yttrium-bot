@@ -222,17 +222,231 @@ impl EventHandler for Handler {
 		}
 	}
 
-	async fn guild_role_create(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _new: serenity::model::guild::Role) {}
+	async fn guild_role_create(&self, context: serenity::client::Context, guild_id: serenity::model::id::GuildId, new: serenity::model::guild::Role) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("RoleCreate", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::RoleCreate(events::RoleCreateEventInfo::new(new.id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("RoleCreate did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("RoleCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in RoleCreate: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn guild_role_delete(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _removed_role_id: serenity::model::id::RoleId, _removed_role_data_if_available: Option<serenity::model::guild::Role>) {}
+	async fn guild_role_delete(&self, context: serenity::client::Context, guild_id: serenity::model::id::GuildId, removed_role_id: serenity::model::id::RoleId, _removed_role_data_if_available: Option<serenity::model::guild::Role>) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("RoleDelete", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::RoleDelete(events::RoleDeleteEventInfo::new(removed_role_id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("RoleDelete did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("RoleDelete event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in RoleDelete: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn guild_role_update(&self, _ctx: serenity::client::Context, _guild_id: serenity::model::id::GuildId, _old_data_if_available: Option<serenity::model::guild::Role>, _new: serenity::model::guild::Role) {}
+	async fn guild_role_update(&self, context: serenity::client::Context, guild_id: serenity::model::id::GuildId, _old_data_if_available: Option<serenity::model::guild::Role>, new: serenity::model::guild::Role) {
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("RoleUpdate", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::RoleUpdate(events::RoleUpdateEventInfo::new(new.id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("RoleUpdate did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("RoleUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in RoleUpdate: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn guild_update(&self, _ctx: serenity::client::Context, _old_data_if_available: Option<serenity::model::guild::Guild>, _new_but_incomplete: serenity::model::guild::PartialGuild) {}
+	async fn guild_update(&self, context: serenity::client::Context, _old_data_if_available: Option<serenity::model::guild::Guild>, new: serenity::model::guild::PartialGuild) {
+		let guild_id = new.id;
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("GuildUpdate", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::GuildUpdate(events::GuildUpdateEventInfo::new());
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("GuildUpdate did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("GuildUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in GuildUpdate: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn reaction_add(&self, _ctx: serenity::client::Context, _add_reaction: serenity::model::channel::Reaction) {}
+	async fn reaction_add(&self, context: serenity::client::Context, reaction: serenity::model::channel::Reaction) {
+		let guild_id = reaction.guild_id.unwrap();
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("ReactionAdd", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::ReactionAdd(events::ReactionAddEventInfo::new(reaction.channel_id, reaction.message_id, reaction.user_id.unwrap(), reaction.emoji));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("ReactionAdd did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("ReactionAdd event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in ReactionAdd: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn reaction_remove(&self, _ctx: serenity::client::Context, _removed_reaction: serenity::model::channel::Reaction) {}
+	async fn reaction_remove(&self, context: serenity::client::Context, reaction: serenity::model::channel::Reaction) {
+		let guild_id = reaction.guild_id.unwrap();
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("ReactionRemove", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::ReactionRemove(events::ReactionRemoveEventInfo::new(reaction.channel_id, reaction.message_id, reaction.user_id.unwrap(), reaction.emoji));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("ReactionRemove did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("ReactionRemove event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in ReactionRemove: `{:#?}`", error);
+				}
+			}
+		}
+	}
 
-	async fn voice_state_update(&self, _ctx: serenity::client::Context, _: Option<serenity::model::id::GuildId>, _old: Option<serenity::model::prelude::VoiceState>, _new: serenity::model::prelude::VoiceState) {}
+	async fn voice_state_update(&self, context: serenity::client::Context, guild_id: Option<serenity::model::id::GuildId>, _old: Option<serenity::model::prelude::VoiceState>, new: serenity::model::prelude::VoiceState) {
+		let guild_id = guild_id.unwrap();
+		let lock = context.data.read().await;
+		let db = lock.get::<DB>().unwrap();
+		if let Some(code) = get_event_code("VoiceUpdate", &guild_id.to_string(), db).await {
+			let db_manager = SQLDatabaseManager::new(guild_id, db);
+			let event_info = events::EventType::VoiceUpdate(events::VoiceUpdateEventInfo::new(new.channel_id.unwrap(), new.user_id));
+			let environment = Environment::new(event_info, guild_id, &context, db_manager);
+			let keys = lock.get::<KeyList>().unwrap();
+			let output = yttrium::interpret_string(code, keys, environment).await;
+			match output {
+				Ok(output) => {
+					if output.result.target.is_none() {
+						eprintln!("VoiceUpdate did not return a valid channel");
+						return;
+					}
+					match output.warnings {
+						Some(warns) => {
+							let message = format!("VoiceUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
+							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+						}
+						None => {
+							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+						}
+					}
+				}
+				Err(error) => {
+					unimplemented!("Error in VoiceUpdate: `{:#?}`", error);
+				}
+			}
+		}
+	}
 }

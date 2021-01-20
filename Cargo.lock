@@ -2095,7 +2095,7 @@ checksum = "85e60b0d1b5f99db2556934e21937020776a5d31520bf169e851ac44e6420214"
 [[package]]
 name = "yttrium"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#27b23694ac246658e13778585c6f6ae7e7152cf6"
+source = "git+https://github.com/adamski234/yttrium#1101c3885dbfe55133f67d1cb058fbd700221708"
 dependencies = [
  "glob",
  "humantime",
@@ -2126,7 +2126,7 @@ dependencies = [
 [[package]]
 name = "yttrium_key_base"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#27b23694ac246658e13778585c6f6ae7e7152cf6"
+source = "git+https://github.com/adamski234/yttrium#1101c3885dbfe55133f67d1cb058fbd700221708"
 dependencies = [
  "serde_json",
  "serenity",
@@ -2135,7 +2135,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_math"
 version = "0.1.0"
-source = "git+https://github.com/adamski234/yttrium#27b23694ac246658e13778585c6f6ae7e7152cf6"
+source = "git+https://github.com/adamski234/yttrium#1101c3885dbfe55133f67d1cb058fbd700221708"
 dependencies = [
  "cxx",
  "cxx-build",
