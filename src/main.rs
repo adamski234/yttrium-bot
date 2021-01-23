@@ -9,7 +9,6 @@ mod utilities;
 mod bot_events;
 mod types;
 use std::sync::Arc;
-use sqlx::Done;
 use serenity::{
 	client::{
 		Context,

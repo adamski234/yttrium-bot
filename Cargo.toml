@@ -17,5 +17,5 @@ json5 = "0.3"
 regex = "1"
 #sqlx = { version = "0.4", features = ["runtime-tokio-rustls", "sqlite"] }
 # TODO: remove when sqlx gets tokio 1.0
-sqlx = { git = "https://github.com/lumeohq/sqlx", branch = "tokio-1.0", features = ["runtime-tokio-rustls", "sqlite"] }
+sqlx = { git = "https://github.com/launchbadge/sqlx", features = ["runtime-tokio-rustls", "sqlite"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
