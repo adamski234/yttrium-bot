@@ -15,6 +15,12 @@ CREATE TABLE IF NOT EXISTS "events" (
 	"guild_id"	TEXT NOT NULL,
 	"code"	TEXT NOT NULL
 );
+CREATE TABLE "config" (
+	"guild_id"	TEXT NOT NULL UNIQUE,
+	"error_channel"	TEXT,
+	"admin_role"	TEXT,
+	PRIMARY KEY("guild_id")
+);
 CREATE UNIQUE INDEX IF NOT EXISTS "triggers_idx" ON "triggers" (
 	"trigger",
 	"guild_id"
