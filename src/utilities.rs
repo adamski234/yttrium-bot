@@ -1,3 +1,4 @@
+use serenity::framework::standard::macros::hook;
 /// Returns a properly capitalized event name, or [None] if the original string was empty or didn't contain an event name
 pub fn proper_event_name(original: &str) -> Option<&str> {
 	match original.to_ascii_lowercase().as_ref() {
@@ -44,4 +45,32 @@ pub fn proper_event_name(original: &str) -> Option<&str> {
 			return None;
 		}
 	};
+}
+
+#[hook]
+pub async fn get_guild_prefix(guild_id: &str, database: &sqlx::SqlitePool) -> String {
+	let query = sqlx::query!("SELECT prefix FROM config WHERE guild_id = ?", guild_id);
+	match query.fetch_optional(database).await {
+		Ok(result) => {
+			match result {
+				Some(result) => {
+					match result.prefix {
+						Some(prefix) => {
+							return prefix;
+						}
+						None => {
+							return String::from(".");
+						}
+					}
+				}
+				None => {
+					return String::from(".");
+				}
+			}
+		}
+		Err(error) => {
+			eprintln!("get_guild_prefix: Error: `{}`", error);
+			return String::new();
+		}
+	}
 }

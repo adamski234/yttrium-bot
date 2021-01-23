@@ -2,6 +2,7 @@
 #![allow(clippy::redundant_field_names)]
 
 #![feature(with_options)]
+#![feature(async_closure)]
 
 mod databases;
 mod match_engine;
@@ -336,7 +337,11 @@ async fn main() {
 	let input = std::fs::read_to_string(config_file).expect("Could not read the config file");
 	let bot_config = json5::from_str::<Config>(&input).expect("The config file is invalid");
 	let framework = serenity::framework::StandardFramework::new().configure(|config| {
-		return config.prefix(&bot_config.prefix);
+		return config.dynamic_prefix(|context, message| Box::pin(async move {
+			let lock = context.data.read().await;
+			let db = lock.get::<DB>().unwrap();
+			return Some(utilities::get_guild_prefix(&message.guild_id.unwrap().to_string(), db).await);
+		})).prefix("");
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(&bot_config.token).intents(GatewayIntents::all()).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
