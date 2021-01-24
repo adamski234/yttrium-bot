@@ -273,3 +273,28 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 	}
 	return Ok(());
 }
+
+
+#[command]
+async fn prefix(context: &Context, message: &Message, args: Args) -> CommandResult {
+	match args.parse::<String>() {
+		Ok(new_prefix) => {
+			let guild_id = message.guild_id.unwrap().to_string();
+			let lock = context.data.read().await;
+			let db = lock.get::<DB>().unwrap();
+			if utilities::set_guild_prefix(&guild_id, &new_prefix, db).await {
+				message.channel_id.say(&context.http, format!("Your prefix has been updated to `{}`", new_prefix)).await.unwrap();
+			} else {
+				message.channel_id.say(&context.http, "Could not update the prefix").await.unwrap();
+			}
+		}
+		Err(_) => {
+			let guild_id = message.guild_id.unwrap().to_string();
+			let lock = context.data.read().await;
+			let db = lock.get::<DB>().unwrap();
+			let old_prefix = utilities::get_guild_prefix(&guild_id, db).await;
+			message.channel_id.say(&context.http, format!("Your current prefix is: `{}`", old_prefix)).await.unwrap();
+		}
+	}
+	return Ok(());
+}

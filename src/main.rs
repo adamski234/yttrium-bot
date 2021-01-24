@@ -25,7 +25,7 @@ use types::*;
 use commands::*;
 
 #[group]
-#[commands(execute, add, remove, show, event_add, event_remove, event_show)]
+#[commands(execute, add, remove, show, event_add, event_remove, event_show, prefix)]
 struct General;
 
 #[hook]
