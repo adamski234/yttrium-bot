@@ -5,7 +5,10 @@ use serenity::{
 		CommandResult,
 		macros::command,
 	},
-	model::channel::Message,
+	model::{
+		channel::Message,
+		id::RoleId,
+	},
 };
 use yttrium_key_base::environment::{Environment, events};
 use crate::types::*;
@@ -274,7 +277,6 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 	return Ok(());
 }
 
-
 #[command]
 async fn prefix(context: &Context, message: &Message, args: Args) -> CommandResult {
 	match args.parse::<String>() {
@@ -295,6 +297,43 @@ async fn prefix(context: &Context, message: &Message, args: Args) -> CommandResu
 			let old_prefix = utilities::get_guild_prefix(&guild_id, db).await;
 			message.channel_id.say(&context.http, format!("Your current prefix is: `{}`", old_prefix)).await.unwrap();
 		}
+	}
+	return Ok(());
+}
+
+#[command]
+async fn admin(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let new_role_id;
+	if message.mention_roles.is_empty() {
+		match args.parse::<RoleId>() {
+			Ok(role) => {
+				new_role_id = Some(role.to_string());
+			}
+			Err(_) => {
+				let possible_role_name = args.rest();
+				let guild = message.guild(&context.cache).await.unwrap();
+				match guild.role_by_name(possible_role_name) {
+					Some(role) => {
+						new_role_id = Some(role.id.to_string());
+					}
+					None => {
+						new_role_id = None;
+					}
+				}
+			}
+		}
+	} else {
+		new_role_id = Some(message.mention_roles[0].to_string());
+	}
+	let lock = context.data.read().await;
+	let db = lock.get::<DB>().unwrap();
+	let result = utilities::set_guild_admin(&message.guild_id.unwrap().to_string(), new_role_id, db).await;
+	std::mem::drop(db);
+	std::mem::drop(lock);
+	if result {
+		message.channel_id.say(&context.http, "Your admin role has been updated").await.unwrap();
+	} else {
+		message.channel_id.say(&context.http, "The update has failed").await.unwrap();
 	}
 	return Ok(());
 }

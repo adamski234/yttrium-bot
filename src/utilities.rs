@@ -99,9 +99,9 @@ pub async fn set_guild_prefix(guild_id: &str, new_prefix: &str, database: &sqlx:
 #[check]
 pub async fn is_guild_admin(context: &Context, message: &Message, _args: &mut Args, _command_options: &CommandOptions) -> Result<(), Reason> {
 	let permissions = message.member(context).await.unwrap().permissions(context).await.unwrap();
-	/*if permissions.administrator() {
+	if permissions.administrator() {
 		return Ok(());
-	}*/
+	}
 	let guild_id = message.guild_id.unwrap().to_string();
 	let query  = sqlx::query!("SELECT admin_role FROM config WHERE guild_id = ?", guild_id);
 	let lock = context.data.read().await;
@@ -147,4 +147,10 @@ pub async fn is_guild_admin(context: &Context, message: &Message, _args: &mut Ar
 			});
 		}
 	}
+}
+
+pub async fn set_guild_admin(guild_id: &str, new_admin_role: Option<String>, database: &sqlx::SqlitePool) -> bool {
+	let query = sqlx::query!("INSERT INTO config (guild_id, admin_role) VALUES (?, ?) ON CONFLICT (guild_id) DO UPDATE SET admin_role = ?", guild_id, new_admin_role, new_admin_role);
+	let result = query.execute(database).await.unwrap();
+	return result.rows_affected() == 1;
 }

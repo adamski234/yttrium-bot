@@ -27,7 +27,7 @@ use utilities::*;
 
 #[group]
 #[checks(is_guild_admin)]
-#[commands(execute, add, remove, show, event_add, event_remove, event_show, prefix)]
+#[commands(execute, add, remove, show, event_add, event_remove, event_show, prefix, admin)]
 struct General;
 
 #[hook]
