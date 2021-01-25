@@ -23,8 +23,10 @@ use serenity::{
 use yttrium_key_base::environment::Environment;
 use types::*;
 use commands::*;
+use utilities::*;
 
 #[group]
+#[checks(is_guild_admin)]
 #[commands(execute, add, remove, show, event_add, event_remove, event_show, prefix)]
 struct General;
 
@@ -42,7 +44,7 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 		//Starting with `&`: literal
 		//Starting with `?`: regex
 		let trigger_type = match_engine::MatchType::new(trigger);
-			if let Some(result) = match_engine::check_match(&message.content, trigger_type) {
+		if let Some(result) = match_engine::check_match(&message.content, trigger_type) {
 			let parameter = result.rest;
 			let trigger = result.matched;
 			let data = context.data.read().await;
