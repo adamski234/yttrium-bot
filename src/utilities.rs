@@ -154,3 +154,9 @@ pub async fn set_guild_admin(guild_id: &str, new_admin_role: Option<String>, dat
 	let result = query.execute(database).await.unwrap();
 	return result.rows_affected() == 1;
 }
+
+pub async fn set_guild_error_channel(guild_id: &str, new_channel: Option<String>, database: &sqlx::SqlitePool) -> bool {
+	let query = sqlx::query!("INSERT INTO config (guild_id, error_channel) VALUES (?, ?) ON CONFLICT (guild_id) DO UPDATE SET error_channel = ?", guild_id, new_channel, new_channel);
+	let result = query.execute(database).await.unwrap();
+	return result.rows_affected() == 1;
+}

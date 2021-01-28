@@ -7,7 +7,10 @@ use serenity::{
 	},
 	model::{
 		channel::Message,
-		id::RoleId,
+		id::{
+			RoleId,
+			ChannelId,
+		},
 	},
 };
 use yttrium_key_base::environment::{Environment, events};
@@ -328,10 +331,45 @@ async fn admin(context: &Context, message: &Message, args: Args) -> CommandResul
 	let lock = context.data.read().await;
 	let db = lock.get::<DB>().unwrap();
 	let result = utilities::set_guild_admin(&message.guild_id.unwrap().to_string(), new_role_id, db).await;
-	std::mem::drop(db);
 	std::mem::drop(lock);
 	if result {
 		message.channel_id.say(&context.http, "Your admin role has been updated").await.unwrap();
+	} else {
+		message.channel_id.say(&context.http, "The update has failed").await.unwrap();
+	}
+	return Ok(());
+}
+
+#[command]
+async fn error_channel(context: &Context, message: &Message, args: Args) -> CommandResult {
+	let new_channel_id;
+	if message.mention_channels.is_empty() {
+		match args.parse::<ChannelId>() {
+			Ok(channel) => {
+				new_channel_id = Some(channel.to_string());
+			}
+			Err(_) => {
+				let possible_role_name = args.rest();
+				let guild = message.guild(&context.cache).await.unwrap();
+				match guild.channel_id_from_name(&context, possible_role_name).await {
+					Some(role) => {
+						new_channel_id = Some(role.to_string());
+					}
+					None => {
+						new_channel_id = None;
+					}
+				}
+			}
+		}
+	} else {
+		new_channel_id = Some(message.mention_channels[0].id.to_string());
+	}
+	let lock = context.data.read().await;
+	let db = lock.get::<DB>().unwrap();
+	let result = utilities::set_guild_error_channel(&message.guild_id.unwrap().to_string(), new_channel_id, db).await;
+	drop(lock);
+	if result {
+		message.channel_id.say(&context.http, "Your error channel has been updated").await.unwrap();
 	} else {
 		message.channel_id.say(&context.http, "The update has failed").await.unwrap();
 	}
