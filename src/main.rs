@@ -10,7 +10,6 @@ mod utilities;
 mod bot_events;
 mod types;
 mod commands;
-use std::sync::Arc;
 use serenity::{
 	client::{
 		Context,
@@ -18,7 +17,6 @@ use serenity::{
 	},
 	framework::standard::macros::{group, hook},
 	model::channel::Message,
-	prelude::RwLock,
 };
 use yttrium_key_base::environment::Environment;
 use types::*;
@@ -84,7 +82,7 @@ async fn main() {
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(&bot_config.token).intents(GatewayIntents::all()).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
-	bot_data.insert::<Config>(Arc::new(RwLock::new(bot_config)));
+	bot_data.insert::<Config>(bot_config);
 	let data = sqlx::SqlitePool::connect(env!("DATABASE_URL")).await.unwrap();
 	bot_data.insert::<DB>(data);
 	let keys = yttrium::key_loader::load_keys();

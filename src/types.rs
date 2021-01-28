@@ -1,6 +1,5 @@
-use std::sync::Arc;
 use serde::{Deserialize, Serialize};
-use serenity::prelude::{RwLock, TypeMapKey};
+use serenity::prelude::TypeMapKey;
 use crate::databases::{
 	SQLDatabase,
 	SQLDatabaseManager,
@@ -12,7 +11,7 @@ pub struct Config {
 }
 
 impl TypeMapKey for Config {
-	type Value = Arc<RwLock<Config>>;
+	type Value = Config;
 }
 
 pub struct DB;
