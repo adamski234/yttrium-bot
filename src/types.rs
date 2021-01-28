@@ -9,7 +9,6 @@ use crate::databases::{
 #[derive(Debug, Hash, Clone, Serialize, Deserialize)]
 pub struct Config {
 	pub token: String,
-	pub prefix: String,
 }
 
 impl TypeMapKey for Config {
