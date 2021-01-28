@@ -70,9 +70,6 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 
 #[tokio::main]
 async fn main() {
-	let config_file = "./config.json5";
-	let input = std::fs::read_to_string(config_file).expect("Could not read the config file");
-	let bot_config = json5::from_str::<Config>(&input).expect("The config file is invalid");
 	let framework = serenity::framework::StandardFramework::new().configure(|config| {
 		return config.dynamic_prefix(|context, message| Box::pin(async move {
 			let lock = context.data.read().await;
@@ -80,9 +77,8 @@ async fn main() {
 			return Some(utilities::get_guild_prefix(&message.guild_id.unwrap().to_string(), db).await);
 		})).prefix("");
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
-	let mut client = serenity::Client::builder(&bot_config.token).intents(GatewayIntents::all()).framework(framework).event_handler(bot_events::Handler).await.unwrap();
+	let mut client = serenity::Client::builder(env!("DISCORD_TOKEN")).intents(GatewayIntents::all()).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
-	bot_data.insert::<Config>(bot_config);
 	let data = sqlx::SqlitePool::connect(env!("DATABASE_URL")).await.unwrap();
 	bot_data.insert::<DB>(data);
 	let keys = yttrium::key_loader::load_keys();
