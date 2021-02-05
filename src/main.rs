@@ -1,9 +1,6 @@
 #![allow(clippy::needless_return)]
 #![allow(clippy::redundant_field_names)]
 
-#![feature(with_options)]
-#![feature(async_closure)]
-
 mod databases;
 mod match_engine;
 mod utilities;
@@ -55,7 +52,8 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			let result = yttrium::interpret_string(code.clone(), keys, environment).await;
 			match result {
 				Ok(result) => {
-					message.channel_id.say(&context.http, result.result.message).await.unwrap();
+					let channel = if let Some(id) = result.result.target { id } else { message.channel_id };
+					utilities::send_result(channel, &context.http, result).await;
 				}
 				Err(error) => {
 					if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {

@@ -28,7 +28,15 @@ async fn execute(context: &Context, message: &Message, args: Args) -> CommandRes
 	let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
 	let output = yttrium::interpret_string(String::from(args.rest()), keys, environment).await;
-	message.channel_id.say(&context.http, format!("{:#?}", output)).await.unwrap();
+	match output {
+		Ok(result) => {
+			let channel = if let Some(id) = result.result.target { id } else { message.channel_id };
+			utilities::send_result(channel, &context.http, result).await;
+		}
+		Err(error) => {
+			message.channel_id.say(&context.http, format!("{:#?}", error)).await.unwrap();
+		}
+	}
 	return Ok(());
 }
 

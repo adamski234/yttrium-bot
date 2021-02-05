@@ -4,6 +4,7 @@ use yttrium_key_base::environment::{
 	Environment,
 	events,
 };
+use crate::utilities;
 use crate::types::*;
 use crate::databases::*;
 
@@ -38,17 +39,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("ChannelDelete did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("ChannelCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("ChannelCreate did not return a valid channel");
 						}
 					}
 				}
@@ -70,17 +66,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("ChannelDelete did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("ChannelDelete event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("ChannelDelete did not return a valid channel");
 						}
 					}
 				}
@@ -103,17 +94,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("ChannelUpdate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("ChannelUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("ChannelUpdate did not return a valid channel");
 						}
 					}
 				}
@@ -136,17 +122,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("MemberJoin did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("MemberJoin event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("MemberJoin did not return a valid channel");
 						}
 					}
 				}
@@ -168,17 +149,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("MemberLeave did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("MemberLeave event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("MemberLeave did not return a valid channel");
 						}
 					}
 				}
@@ -201,17 +177,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("MemberUpdate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("MemberUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("MemberUpdate did not return a valid channel");
 						}
 					}
 				}
@@ -233,17 +204,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("RoleCreate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("RoleCreate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("RoleCreate did not return a valid channel");
 						}
 					}
 				}
@@ -265,17 +231,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("RoleDelete did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("RoleDelete event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("RoleDelete did not return a valid channel");
 						}
 					}
 				}
@@ -297,17 +258,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("RoleUpdate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("RoleUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("RoleUpdate did not return a valid channel");
 						}
 					}
 				}
@@ -330,17 +286,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("GuildUpdate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("GuildUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("GuildUpdate did not return a valid channel");
 						}
 					}
 				}
@@ -363,17 +314,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("ReactionAdd did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("ReactionAdd event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("ReactionAdd did not return a valid channel");
 						}
 					}
 				}
@@ -396,17 +342,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("ReactionRemove did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("ReactionRemove event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("ReactionRemove did not return a valid channel");
 						}
 					}
 				}
@@ -429,17 +370,12 @@ impl EventHandler for Handler {
 			let output = yttrium::interpret_string(code, keys, environment).await;
 			match output {
 				Ok(output) => {
-					if output.result.target.is_none() {
-						eprintln!("VoiceUpdate did not return a valid channel");
-						return;
-					}
-					match output.warnings {
-						Some(warns) => {
-							let message = format!("VoiceUpdate event had the following warnings: ```{:#?}```\n{}", warns, output.result.message);
-							output.result.target.unwrap().say(&context.http, message).await.unwrap();
+					match output.result.target {
+						Some(channel) => {
+							utilities::send_result(channel, &context.http, output).await;
 						}
 						None => {
-							output.result.target.unwrap().say(&context.http, output.result.message).await.unwrap();
+							eprintln!("VoiceUpdate did not return a valid channel");
 						}
 					}
 				}

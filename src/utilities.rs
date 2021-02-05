@@ -1,8 +1,12 @@
 use serenity::{
 	model::{
 		channel::Message,
-		id::RoleId,
+		id::{
+			RoleId,
+			ChannelId,
+		},
 	},
+	http::Http,
 	prelude::Context,
 	framework::standard::{
 		Args,
@@ -11,8 +15,10 @@ use serenity::{
 		macros::{hook, check}
 	}
 };
+use yttrium::ResultAndWarnings;
 
 use crate::types::*;
+use yttrium_key_base::databases::{DatabaseManager, Database};
 
 /// Returns a properly capitalized event name, or [None] if the original string was empty or didn't contain an event name
 pub fn proper_event_name(original: &str) -> Option<&str> {
@@ -159,4 +165,26 @@ pub async fn set_guild_error_channel(guild_id: &str, new_channel: Option<String>
 	let query = sqlx::query!("INSERT INTO config (guild_id, error_channel) VALUES (?, ?) ON CONFLICT (guild_id) DO UPDATE SET error_channel = ?", guild_id, new_channel, new_channel);
 	let result = query.execute(database).await.unwrap();
 	return result.rows_affected() == 1;
+}
+
+pub async fn send_result<DB: Database, Manager: DatabaseManager<DB>>(channel: ChannelId, http: &Http, result: ResultAndWarnings<'_, Manager, DB>) {
+	let mut output = String::new();
+	if let Some(warnings) = result.warnings {
+		for warning in warnings {
+			match warning {
+			    yttrium::errors_and_warns::Warning::UnclosedKeys => {
+					output.push_str("There were unclosed keys in the response\n");
+				}
+			}
+		}
+	}
+	output.push_str(&result.result.message);
+	if !output.is_empty() {
+		channel.say(http, &output).await.unwrap();
+	}
+	if let Some(embed) = result.result.environment.embed {
+		channel.send_message(http, |message| {
+			return message.set_embed(embed);
+		}).await.unwrap();
+	}
 }
