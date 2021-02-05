@@ -1,17 +1,17 @@
 use serenity::prelude::TypeMapKey;
 use crate::databases::{
-	SQLDatabase,
-	SQLDatabaseManager,
+	SqlDatabase,
+	SqlDatabaseManager,
 };
 
-pub struct DB;
+pub struct Database;
 
-impl TypeMapKey for DB {
+impl TypeMapKey for Database {
 	type Value = sqlx::sqlite::SqlitePool;
 }
 
 pub struct KeyList;
 
 impl TypeMapKey for KeyList {
-	type Value = std::collections::HashMap<String, Box<dyn yttrium_key_base::Key<SQLDatabaseManager, SQLDatabase> + Sync + Send>>;
+	type Value = std::collections::HashMap<String, Box<dyn yttrium_key_base::Key<SqlDatabaseManager, SqlDatabase> + Sync + Send>>;
 }

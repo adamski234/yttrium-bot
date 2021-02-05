@@ -24,8 +24,8 @@ async fn execute(context: &Context, message: &Message, args: Args) -> CommandRes
 	let data = context.data.read().await;
 	let keys = data.get::<KeyList>().unwrap();
 	//Placeholder manager
-	let pool = data.get::<DB>().unwrap();
-	let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
+	let pool = data.get::<Database>().unwrap();
+	let db_manager = databases::SqlDatabaseManager::new(message.guild_id.unwrap(), pool);
 	let environment = Environment::new(events::EventType::Default, message.guild_id.unwrap(), &context, db_manager);
 	let output = yttrium::interpret_string(String::from(args.rest()), keys, environment).await;
 	match output {
@@ -71,7 +71,7 @@ async fn add(context: &Context, message: &Message, mut args: Args) -> CommandRes
 			}
 			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
-			let db = lock.get::<DB>().unwrap();
+			let db = lock.get::<Database>().unwrap();
 			sqlx::query!("REPLACE INTO triggers VALUES (?, ?, ?)", trigger, code, guild_id).execute(db).await.unwrap();
 		}
 		Err(error) => {
@@ -98,7 +98,7 @@ async fn remove(context: &Context, message: &Message, args: Args) -> CommandResu
 	let guild_id = message.guild_id.unwrap().to_string();
 	let query = sqlx::query!("DELETE FROM triggers WHERE trigger = ? AND guild_id = ?", trigger, guild_id);
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	match query.execute(db).await.unwrap().rows_affected() {
 		0 => {
 			message.channel_id.say(&context.http, "Trigger not found").await.unwrap();
@@ -117,7 +117,7 @@ async fn show(context: &Context, message: &Message, mut args: Args) -> CommandRe
 	let guild_id = message.guild_id.unwrap().to_string();
 	let query = sqlx::query!("SELECT code FROM triggers WHERE trigger = ? AND guild_id = ?", trigger, guild_id);
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	match query.fetch_optional(db).await {
 		Ok(Some(result)) => {
 			let code = result.code;
@@ -192,7 +192,7 @@ async fn event_add(context: &Context, message: &Message, mut args: Args) -> Comm
 			}
 			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
-			let db = lock.get::<DB>().unwrap();
+			let db = lock.get::<Database>().unwrap();
 			let query = sqlx::query!("REPLACE INTO events VALUES (?, ?, ?)", event, guild_id, code);
 			query.execute(db).await.unwrap();
 		}
@@ -236,7 +236,7 @@ async fn event_remove(context: &Context, message: &Message, args: Args) -> Comma
 	}
 	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	let query = sqlx::query!("DELETE FROM events WHERE event = ? AND guild_id = ?", event, guild_id);
 	match query.execute(db).await.unwrap().rows_affected() {
 		0 => {
@@ -271,7 +271,7 @@ async fn event_show(context: &Context, message: &Message, args: Args) -> Command
 	}
 	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	let query = sqlx::query!("SELECT code FROM events WHERE event = ? AND guild_id = ?", event, guild_id);
 	match query.fetch_optional(db).await {
 		Ok(Some(result)) => {
@@ -294,7 +294,7 @@ async fn prefix(context: &Context, message: &Message, args: Args) -> CommandResu
 		Ok(new_prefix) => {
 			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
-			let db = lock.get::<DB>().unwrap();
+			let db = lock.get::<Database>().unwrap();
 			if utilities::set_guild_prefix(&guild_id, &new_prefix, db).await {
 				message.channel_id.say(&context.http, format!("Your prefix has been updated to `{}`", new_prefix)).await.unwrap();
 			} else {
@@ -304,7 +304,7 @@ async fn prefix(context: &Context, message: &Message, args: Args) -> CommandResu
 		Err(_) => {
 			let guild_id = message.guild_id.unwrap().to_string();
 			let lock = context.data.read().await;
-			let db = lock.get::<DB>().unwrap();
+			let db = lock.get::<Database>().unwrap();
 			let old_prefix = utilities::get_guild_prefix(&guild_id, db).await;
 			message.channel_id.say(&context.http, format!("Your current prefix is: `{}`", old_prefix)).await.unwrap();
 		}
@@ -337,7 +337,7 @@ async fn admin(context: &Context, message: &Message, args: Args) -> CommandResul
 		new_role_id = Some(message.mention_roles[0].to_string());
 	}
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	let result = utilities::set_guild_admin(&message.guild_id.unwrap().to_string(), new_role_id, db).await;
 	std::mem::drop(lock);
 	if result {
@@ -373,7 +373,7 @@ async fn error_channel(context: &Context, message: &Message, args: Args) -> Comm
 		new_channel_id = Some(message.mention_channels[0].id.to_string());
 	}
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	let result = utilities::set_guild_error_channel(&message.guild_id.unwrap().to_string(), new_channel_id, db).await;
 	drop(lock);
 	if result {

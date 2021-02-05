@@ -1,21 +1,21 @@
-pub struct SQLDatabase {
+pub struct SqlDatabase {
 	guild_id: serenity::model::id::GuildId,
 	name: String,
 	pool: sqlx::SqlitePool,
 }
 
-impl SQLDatabase {
+impl SqlDatabase {
 	pub fn new(guild_id: serenity::model::id::GuildId, pool: sqlx::SqlitePool, name: String) -> Self {
 		return Self { guild_id, pool, name };
 	}
 }
 
-pub struct SQLDatabaseManager {
+pub struct SqlDatabaseManager {
 	guild_id: serenity::model::id::GuildId,
 	pool: sqlx::SqlitePool,
 }
 
-impl SQLDatabaseManager {
+impl SqlDatabaseManager {
 	pub fn new(guild_id: serenity::model::id::GuildId, pool: &sqlx::SqlitePool) -> Self {
 		return Self {
 			guild_id: guild_id,
@@ -24,7 +24,7 @@ impl SQLDatabaseManager {
 	}
 }
 
-impl yttrium_key_base::databases::Database for SQLDatabase {
+impl yttrium_key_base::databases::Database for SqlDatabase {
     fn get_key(&self, name: &str) -> Option<yttrium_key_base::databases::StringOrArray> {
 		let guild_id = self.guild_id.to_string();
 		let query = sqlx::query!("SELECT key_value FROM databases WHERE name = ? AND guild_id = ? AND key_name = ?", self.name, guild_id, name);
@@ -81,9 +81,9 @@ impl yttrium_key_base::databases::Database for SQLDatabase {
     }
 }
 
-impl yttrium_key_base::databases::DatabaseManager<SQLDatabase> for SQLDatabaseManager {
-	fn get_database(&mut self, name: &str) -> SQLDatabase {
-		return SQLDatabase::new(self.guild_id, self.pool.clone(), String::from(name))
+impl yttrium_key_base::databases::DatabaseManager<SqlDatabase> for SqlDatabaseManager {
+	fn get_database(&mut self, name: &str) -> SqlDatabase {
+		return SqlDatabase::new(self.guild_id, self.pool.clone(), String::from(name))
 	}
 
 	fn remove_database(&mut self, name: &str) {
@@ -99,5 +99,5 @@ impl yttrium_key_base::databases::DatabaseManager<SQLDatabase> for SQLDatabaseMa
 	}
 }
 
-unsafe impl Send for SQLDatabaseManager {}
-unsafe impl Sync for SQLDatabaseManager {}
+unsafe impl Send for SqlDatabaseManager {}
+unsafe impl Sync for SqlDatabaseManager {}

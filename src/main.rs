@@ -29,7 +29,7 @@ struct General;
 async fn normal_message_hook(context: &Context, message: &Message) {
 	let guild_id = message.guild_id.unwrap().to_string();
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<Database>().unwrap();
 	let query = sqlx::query!("SELECT trigger, code FROM triggers WHERE guild_id = ?", guild_id);
 	let result = query.fetch_all(db).await.unwrap();
 	for row in result {
@@ -43,8 +43,8 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			let parameter = result.rest;
 			let trigger = result.matched;
 			let data = context.data.read().await;
-			let pool = data.get::<DB>().unwrap();
-			let db_manager = databases::SQLDatabaseManager::new(message.guild_id.unwrap(), pool);
+			let pool = data.get::<Database>().unwrap();
+			let db_manager = databases::SqlDatabaseManager::new(message.guild_id.unwrap(), pool);
 			let event_info = yttrium_key_base::environment::events::MessageEventInfo::new(message.channel_id, message.id, message.author.id, parameter, trigger);
 			let event = yttrium_key_base::environment::events::EventType::Message(event_info);
 			let environment = Environment::new(event, message.guild_id.unwrap(), context, db_manager);
@@ -71,14 +71,14 @@ async fn main() {
 	let framework = serenity::framework::StandardFramework::new().configure(|config| {
 		return config.dynamic_prefix(|context, message| Box::pin(async move {
 			let lock = context.data.read().await;
-			let db = lock.get::<DB>().unwrap();
+			let db = lock.get::<Database>().unwrap();
 			return Some(utilities::get_guild_prefix(&message.guild_id.unwrap().to_string(), db).await);
 		})).prefix("");
 	}).group(&GENERAL_GROUP).normal_message(normal_message_hook);
 	let mut client = serenity::Client::builder(env!("DISCORD_TOKEN")).intents(GatewayIntents::all()).framework(framework).event_handler(bot_events::Handler).await.unwrap();
 	let mut bot_data = client.data.write().await;
 	let data = sqlx::SqlitePool::connect(env!("DATABASE_URL")).await.unwrap();
-	bot_data.insert::<DB>(data);
+	bot_data.insert::<Database>(data);
 	let keys = yttrium::key_loader::load_keys();
 	bot_data.insert::<KeyList>(keys);
 	std::mem::drop(bot_data);

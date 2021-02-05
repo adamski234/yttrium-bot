@@ -16,8 +16,6 @@ use serenity::{
 	}
 };
 use yttrium::ResultAndWarnings;
-
-use crate::types::*;
 use yttrium_key_base::databases::{DatabaseManager, Database};
 
 /// Returns a properly capitalized event name, or [None] if the original string was empty or didn't contain an event name
@@ -111,7 +109,7 @@ pub async fn is_guild_admin(context: &Context, message: &Message, _args: &mut Ar
 	let guild_id = message.guild_id.unwrap().to_string();
 	let query  = sqlx::query!("SELECT admin_role FROM config WHERE guild_id = ?", guild_id);
 	let lock = context.data.read().await;
-	let db = lock.get::<DB>().unwrap();
+	let db = lock.get::<crate::types::Database>().unwrap();
 	match query.fetch_optional(db).await {
 		Ok(result) => {
 			match result {
