@@ -31,7 +31,7 @@ async fn execute(context: &Context, message: &Message, args: Args) -> CommandRes
 	match output {
 		Ok(result) => {
 			let channel = if let Some(id) = result.result.target { id } else { message.channel_id };
-			utilities::send_result(channel, &context.http, result).await;
+			utilities::send_result(channel, &context, result).await;
 		}
 		Err(error) => {
 			message.channel_id.say(&context.http, format!("{:#?}", error)).await.unwrap();

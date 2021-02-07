@@ -53,7 +53,7 @@ async fn normal_message_hook(context: &Context, message: &Message) {
 			match result {
 				Ok(result) => {
 					let channel = if let Some(id) = result.result.target { id } else { message.channel_id };
-					utilities::send_result(channel, &context.http, result).await;
+					utilities::send_result(channel, &context, result).await;
 				}
 				Err(error) => {
 					if let yttrium::errors_and_warns::Error::InterpretationError(error) = error {

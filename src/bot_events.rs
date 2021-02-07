@@ -1,7 +1,7 @@
 use serenity::{
 	client::EventHandler,
 	async_trait,
-	http::Http,
+	prelude::Context,
 };
 use yttrium_key_base::environment::{
 	Environment,
@@ -31,12 +31,12 @@ async fn get_event_code(event_name: &str, guild_id: &str, pool: &sqlx::SqlitePoo
 	}
 }
 
-async fn send_output(event_name: &str, http: &Http, output: Result<ResultAndWarnings<'_, SqlDatabaseManager, SqlDatabase>, Error>) {
+async fn send_output(event_name: &str, context: &Context, output: Result<ResultAndWarnings<'_, SqlDatabaseManager, SqlDatabase>, Error>) {
 	match output {
 		Ok(output) => {
 			match output.result.target {
 				Some(channel) => {
-					utilities::send_result(channel, http, output).await;
+					utilities::send_result(channel, context, output).await;
 				}
 				None => {
 					eprintln!("{} did not return a valid channel", event_name);
@@ -62,7 +62,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("ChannelCreate", &context.http, output).await;
+			send_output("ChannelCreate", &context, output).await;
 		}
 	}
 
@@ -75,7 +75,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("ChannelDelete", &context.http, output).await;
+			send_output("ChannelDelete", &context, output).await;
 		}
 	}
 
@@ -89,7 +89,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("ChannelUpdate", &context.http, output).await;
+			send_output("ChannelUpdate", &context, output).await;
 		}
 	}
 	
@@ -103,7 +103,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("MemberJoin", &context.http, output).await;
+			send_output("MemberJoin", &context, output).await;
 		}
 	}
 
@@ -116,7 +116,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("MemberLeave", &context.http, output).await;
+			send_output("MemberLeave", &context, output).await;
 		}
 	}
 
@@ -130,7 +130,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("MemberUpdate", &context.http, output).await;
+			send_output("MemberUpdate", &context, output).await;
 		}
 	}
 
@@ -143,7 +143,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("RoleCreate", &context.http, output).await;
+			send_output("RoleCreate", &context, output).await;
 		}
 	}
 
@@ -156,7 +156,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("RoleDelete", &context.http, output).await;
+			send_output("RoleDelete", &context, output).await;
 		}
 	}
 
@@ -169,7 +169,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("RoleUpdate", &context.http, output).await;
+			send_output("RoleUpdate", &context, output).await;
 		}
 	}
 
@@ -183,7 +183,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("GuildUpdate", &context.http, output).await;
+			send_output("GuildUpdate", &context, output).await;
 		}
 	}
 
@@ -197,7 +197,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("ReactionAdd", &context.http, output).await;
+			send_output("ReactionAdd", &context, output).await;
 		}
 	}
 
@@ -211,7 +211,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("ReactionRemove", &context.http, output).await;
+			send_output("ReactionRemove", &context, output).await;
 		}
 	}
 
@@ -225,7 +225,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			send_output("VoiceUpdate", &context.http, output).await;
+			send_output("VoiceUpdate", &context, output).await;
 		}
 	}
 }
