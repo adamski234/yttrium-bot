@@ -1,8 +1,15 @@
-use serenity::client::EventHandler;
-use serenity::async_trait;
+use serenity::{
+	client::EventHandler,
+	async_trait,
+	http::Http,
+};
 use yttrium_key_base::environment::{
 	Environment,
 	events,
+};
+use yttrium::{
+	ResultAndWarnings,
+	errors_and_warns::Error
 };
 use crate::utilities;
 use crate::types::*;
@@ -24,6 +31,24 @@ async fn get_event_code(event_name: &str, guild_id: &str, pool: &sqlx::SqlitePoo
 	}
 }
 
+async fn send_output(event_name: &str, http: &Http, output: Result<ResultAndWarnings<'_, SqlDatabaseManager, SqlDatabase>, Error>) {
+	match output {
+		Ok(output) => {
+			match output.result.target {
+				Some(channel) => {
+					utilities::send_result(channel, http, output).await;
+				}
+				None => {
+					eprintln!("{} did not return a valid channel", event_name);
+				}
+			}
+		}
+		Err(error) => {
+			unimplemented!("Error in {}: `{:#?}`", event_name, error);
+		}
+	}
+}
+
 pub struct Handler;
 
 #[async_trait]
@@ -37,21 +62,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("ChannelCreate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in ChannelCreate: `{:#?}`", error);
-				}
-			}
+			send_output("ChannelCreate", &context.http, output).await;
 		}
 	}
 
@@ -64,21 +75,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("ChannelDelete did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in ChannelDelete: `{:#?}`", error);
-				}
-			}
+			send_output("ChannelDelete", &context.http, output).await;
 		}
 	}
 
@@ -92,21 +89,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, channel.guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("ChannelUpdate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in ChannelUpdate: `{:#?}`", error);
-				}
-			}
+			send_output("ChannelUpdate", &context.http, output).await;
 		}
 	}
 	
@@ -120,21 +103,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("MemberJoin did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in MemberJoin: `{:#?}`", error);
-				}
-			}
+			send_output("MemberJoin", &context.http, output).await;
 		}
 	}
 
@@ -147,21 +116,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("MemberLeave did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in MemberLeave: `{:#?}`", error);
-				}
-			}
+			send_output("MemberLeave", &context.http, output).await;
 		}
 	}
 
@@ -175,21 +130,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("MemberUpdate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in MemberUpdate: `{:#?}`", error);
-				}
-			}
+			send_output("MemberUpdate", &context.http, output).await;
 		}
 	}
 
@@ -202,21 +143,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("RoleCreate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in RoleCreate: `{:#?}`", error);
-				}
-			}
+			send_output("RoleCreate", &context.http, output).await;
 		}
 	}
 
@@ -229,21 +156,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("RoleDelete did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in RoleDelete: `{:#?}`", error);
-				}
-			}
+			send_output("RoleDelete", &context.http, output).await;
 		}
 	}
 
@@ -256,21 +169,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("RoleUpdate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in RoleUpdate: `{:#?}`", error);
-				}
-			}
+			send_output("RoleUpdate", &context.http, output).await;
 		}
 	}
 
@@ -284,21 +183,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("GuildUpdate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in GuildUpdate: `{:#?}`", error);
-				}
-			}
+			send_output("GuildUpdate", &context.http, output).await;
 		}
 	}
 
@@ -312,21 +197,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("ReactionAdd did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in ReactionAdd: `{:#?}`", error);
-				}
-			}
+			send_output("ReactionAdd", &context.http, output).await;
 		}
 	}
 
@@ -340,21 +211,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("ReactionRemove did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in ReactionRemove: `{:#?}`", error);
-				}
-			}
+			send_output("ReactionRemove", &context.http, output).await;
 		}
 	}
 
@@ -368,21 +225,7 @@ impl EventHandler for Handler {
 			let environment = Environment::new(event_info, guild_id, &context, db_manager);
 			let keys = lock.get::<KeyList>().unwrap();
 			let output = yttrium::interpret_string(code, keys, environment).await;
-			match output {
-				Ok(output) => {
-					match output.result.target {
-						Some(channel) => {
-							utilities::send_result(channel, &context.http, output).await;
-						}
-						None => {
-							eprintln!("VoiceUpdate did not return a valid channel");
-						}
-					}
-				}
-				Err(error) => {
-					unimplemented!("Error in VoiceUpdate: `{:#?}`", error);
-				}
-			}
+			send_output("VoiceUpdate", &context.http, output).await;
 		}
 	}
 }
