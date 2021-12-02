@@ -164,7 +164,7 @@ pub async fn set_guild_error_channel(guild_id: &str, new_channel: Option<String>
 	return result.rows_affected() == 1;
 }
 
-pub async fn send_result<DB: Database, Manager: DatabaseManager<DB>>(channel: ChannelId, context: &Context, result: ResultAndWarnings<'_, Manager, DB>) {
+pub async fn send_result<DB: Database, Manager: DatabaseManager<DB>>(context: &Context, result: ResultAndWarnings<'_, Manager, DB>) {
 	let mut output = String::new();
 	if let Some(warnings) = result.warnings {
 		for warning in warnings {
@@ -175,23 +175,45 @@ pub async fn send_result<DB: Database, Manager: DatabaseManager<DB>>(channel: Ch
 			}
 		}
 	}
-	output.push_str(&result.result.message);
+	let result = check_and_schedule_sleep(result.result);
+	if result.is_none() {
+		return;
+	}
+	let result = result.unwrap();
+	let channel = ChannelId::from(result.environment.target.parse::<u64>().unwrap());
+	output.push_str(&result.message);
 	let mut message = None;
 	if !output.is_empty() {
 		message = Some(channel.say(context, &output).await.unwrap());
 	}
-	if let Some(embed) = result.result.environment.embed {
+	if let Some(embed) = result.environment.embed {
 		message = Some(channel.send_message(context, |message| {
 			return message.set_embed(embed);
 		}).await.unwrap());
 	}
 	if let Some(message) = message {
-		for reaction in result.result.environment.reactions_to_add {
+		for reaction in result.environment.reactions_to_add {
 			message.react(context, reaction).await.unwrap();
 		}
-		if let Some(duration) = result.result.environment.delete_option {
+		if let Some(duration) = result.environment.delete_option {
 			tokio::time::sleep(duration).await;
 			message.delete(context).await.unwrap();
+		}
+	}
+}
+
+/// Takes in the result of interpreting and checks for sleep
+/// Schedules code for execution later if sleep is planned
+/// Otherwise returns the result
+pub fn check_and_schedule_sleep<DB: Database, Manager: DatabaseManager<DB>>(result_or_sleep: yttrium::interpreter::InterpretationResultOrSleep<'_, Manager, DB>) -> Option<yttrium::interpreter::InterpretationResult<'_, Manager, DB>> {
+	match result_or_sleep {
+		yttrium::interpreter::InterpretationResultOrSleep::Result(result) => {
+			return Some(result);
+		}
+		yttrium::interpreter::InterpretationResultOrSleep::Sleep(sleep) => {
+			println!("{:?}", sleep.duration);
+			//TODO actually schedule
+			return None;
 		}
 	}
 }

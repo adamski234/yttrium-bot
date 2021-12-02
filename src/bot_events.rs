@@ -34,14 +34,7 @@ async fn get_event_code(event_name: &str, guild_id: &str, pool: &sqlx::SqlitePoo
 async fn send_output(event_name: &str, context: &Context, output: Result<ResultAndWarnings<'_, SqlDatabaseManager, SqlDatabase>, Error>) {
 	match output {
 		Ok(output) => {
-			match output.result.target {
-				Some(channel) => {
-					utilities::send_result(channel, context, output).await;
-				}
-				None => {
-					eprintln!("{} did not return a valid channel", event_name);
-				}
-			}
+			utilities::send_result(context, output).await;
 		}
 		Err(error) => {
 			unimplemented!("Error in {}: `{:#?}`", event_name, error);

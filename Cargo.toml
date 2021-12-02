@@ -8,15 +8,12 @@ edition = "2018"
 
 [dependencies]
 
-yttrium = { git = "https://github.com/adamski234/yttrium" }
-yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
+#yttrium = { git = "https://github.com/adamski234/yttrium" }
+#yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
+yttrium = { path = "../yttrium" }
+yttrium_key_base = { path = "../yttrium/yttrium_key_base" }
 serenity = "0.10"
 futures = "0.3"
 regex = "1"
 sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "sqlite"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-
-# Fix for lexical-core not compiling on nightly
-# TODO: remove when it gets fixed
-[patch.crates-io]
-lexical-core = { git = "https://github.com/Gelbpunkt/rust-lexical/", branch = "fix-warnings-and-update-deps" }
