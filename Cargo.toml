@@ -8,10 +8,8 @@ edition = "2018"
 
 [dependencies]
 
-#yttrium = { git = "https://github.com/adamski234/yttrium" }
-#yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
-yttrium = { path = "../yttrium" }
-yttrium_key_base = { path = "../yttrium/yttrium_key_base" }
+yttrium = { git = "https://github.com/adamski234/yttrium" }
+yttrium_key_base = { git = "https://github.com/adamski234/yttrium" }
 serenity = "0.10"
 futures = "0.3"
 regex = "1"

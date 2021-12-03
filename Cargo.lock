@@ -1912,6 +1912,7 @@ dependencies = [
 [[package]]
 name = "yttrium"
 version = "1.0.0"
+source = "git+https://github.com/adamski234/yttrium#95c7a8b0b5e2ee047c24c35ef767f47cd330eb00"
 dependencies = [
  "glob",
  "humantime",
@@ -1940,6 +1941,7 @@ dependencies = [
 [[package]]
 name = "yttrium_key_base"
 version = "1.0.0"
+source = "git+https://github.com/adamski234/yttrium#95c7a8b0b5e2ee047c24c35ef767f47cd330eb00"
 dependencies = [
  "serde_json",
  "serenity",
@@ -1948,6 +1950,7 @@ dependencies = [
 [[package]]
 name = "yttrium_std_math"
 version = "1.0.0"
+source = "git+https://github.com/adamski234/yttrium#95c7a8b0b5e2ee047c24c35ef767f47cd330eb00"
 dependencies = [
  "cxx",
  "cxx-build",
