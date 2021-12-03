@@ -180,7 +180,16 @@ pub async fn send_result<DB: Database, Manager: DatabaseManager<DB>>(context: &C
 		return;
 	}
 	let result = result.unwrap();
-	let channel = ChannelId::from(result.environment.target.parse::<u64>().unwrap());
+	let channel;
+	match result.environment.target.parse::<u64>() {
+		Ok(value) => {
+			channel = ChannelId::from(value)
+		}
+		Err(_) => {
+			// TODO fix this
+			return;
+		}
+	}
 	output.push_str(&result.message);
 	let mut message = None;
 	if !output.is_empty() {
